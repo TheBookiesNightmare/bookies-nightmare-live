@@ -19,23 +19,33 @@
         .ticker-item { display: inline-block; padding: 0 2rem; font-size: 10px; font-weight: 900; color: #000; }
         @keyframes marquee { 0% { transform: translate(0, 0); } 100% { transform: translate(-100%, 0); } }
 
-        /* MODAL FIX: High Z-Index & Clickable */
+        /* MODAL FIX: Ultimate Layering */
         #telegram-modal { position: fixed; inset: 0; z-index: 9998; background: rgba(0,0,0,0.95); display: flex; align-items: center; justify-content: center; padding: 20px; }
-        .modal-content { position: relative; z-index: 9999; width: 100%; max-width: 350px; text-align: center; }
-        .close-btn { pointer-events: auto !important; cursor: pointer !important; position: relative; z-index: 10000; }
+        .modal-content { position: relative; z-index: 9999; width: 100%; max-width: 380px; text-align: center; }
+        
+        /* THE X BUTTON */
+        .exit-x { 
+            position: absolute; top: -15px; right: -15px; width: 35px; height: 35px; 
+            background: #F59E0B; color: #000; border-radius: 50%; font-weight: 900;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; z-index: 10001; pointer-events: auto !important;
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.4);
+        }
     </style>
 </head>
 <body class="pb-24">
 
     <div id="telegram-modal" class="hide">
-        <div class="modal-content glass p-8 rounded-3xl border-2 border-amber-500">
-            <h2 class="text-2xl font-black italic text-amber-500 mb-2 uppercase">Syndicate Access</h2>
-            <p class="text-xs text-gray-400 mb-6 font-bold uppercase tracking-widest leading-relaxed">Join 12,000+ members receiving daily 2026 locks and prop alerts.</p>
+        <div class="modal-content glass p-10 rounded-3xl border-2 border-amber-500">
+            <div onclick="closeModal()" class="exit-x">✕</div>
+
+            <h2 class="text-3xl font-black italic text-amber-500 mb-2 uppercase tracking-tighter">Syndicate Access</h2>
+            <p class="text-[10px] text-gray-400 mb-8 font-bold uppercase tracking-[0.2em] leading-relaxed">Join 12,000+ members receiving daily 2026 locks and prop alerts.</p>
             
-            <a href="https://t.me/+QJx8ax575HZhMmUx" class="block w-full py-4 bg-amber-500 text-black font-black rounded-xl text-sm mb-6 uppercase tracking-widest">JOIN TELEGRAM</a>
+            <a href="https://t.me/+QJx8ax575HZhMmUx" class="block w-full py-5 bg-amber-500 text-black font-black rounded-2xl text-sm mb-6 uppercase tracking-widest shadow-lg shadow-amber-500/30 transition-transform active:scale-95">JOIN PRIVATE TELEGRAM</a>
             
-            <button onclick="closeModal()" class="close-btn block mx-auto text-[11px] text-gray-500 font-black uppercase tracking-[0.2em] py-4 px-8">
-                [ Close & Continue ]
+            <button onclick="closeModal()" class="block mx-auto text-[10px] text-gray-600 font-black uppercase tracking-[0.3em] py-2 px-4 hover:text-white transition-colors cursor-pointer relative z-[10001]">
+                Maybe Later
             </button>
         </div>
     </div>
@@ -61,7 +71,7 @@
 
     <main class="p-4 max-w-4xl mx-auto">
         <div id="game-container" class="space-y-4">
-            <p class="text-center text-gray-600 text-[10px] animate-pulse py-10 uppercase font-black">Connecting to 2026 Feed...</p>
+            <p class="text-center text-gray-600 text-[10px] animate-pulse py-10 uppercase font-black">Syncing 2026 Feed...</p>
         </div>
 
         <div class="mt-8 glass p-6 rounded-3xl border border-amber-500/20 text-center">
@@ -87,16 +97,17 @@
         }, 30000);
 
         function closeModal() { 
-            document.getElementById('telegram-modal').classList.add('hide');
+            const modal = document.getElementById('telegram-modal');
+            modal.classList.add('hide');
+            modal.style.display = 'none'; // Triple redundancy
         }
 
         async function fetchGames(sportKey, btnElement) {
-            // UI Toggle
             document.querySelectorAll('header button').forEach(btn => btn.classList.remove('filter-active'));
             if(btnElement) btnElement.classList.add('filter-active');
 
             const container = document.getElementById('game-container');
-            container.innerHTML = '<p class="text-center text-gray-600 text-[10px] animate-pulse py-10 font-black uppercase">Fetching Live Odds...</p>';
+            container.innerHTML = '<p class="text-center text-gray-600 text-[10px] animate-pulse py-10 font-black uppercase">Fetching Odds...</p>';
 
             try {
                 const response = await fetch(`https://api.the-odds-api.com/v4/sports/${sportKey}/odds/?apiKey=${API_KEY}&regions=us&markets=h2h`);
@@ -104,7 +115,7 @@
                 container.innerHTML = '';
 
                 if (!data || data.length === 0) {
-                    container.innerHTML = '<div class="glass p-10 rounded-3xl text-center text-gray-600 text-[10px] font-black uppercase">No active games found. Join Telegram for VIP cards.</div>';
+                    container.innerHTML = '<div class="glass p-10 rounded-3xl text-center text-gray-600 text-[10px] font-black uppercase">No active games. Check Telegram.</div>';
                     return;
                 }
 
@@ -125,7 +136,7 @@
                     container.appendChild(gameDiv);
                 });
             } catch (e) {
-                container.innerHTML = '<p class="text-center text-red-500 text-[10px] font-black uppercase">Live Feed Unavailable. Check Telegram.</p>';
+                container.innerHTML = '<p class="text-center text-red-500 text-[10px] font-black uppercase">Live Feed Unavailable.</p>';
             }
         }
 
