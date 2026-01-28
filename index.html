@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>THE BOOKIES NIGHTMARE | ANALYTICS 2026</title>
+    <title>THE BOOKIES NIGHTMARE | 2026</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
@@ -11,97 +11,92 @@
         .gold-glow { text-shadow: 0 0 15px rgba(245, 158, 11, 0.4); }
         .glass { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(245, 158, 11, 0.1); backdrop-filter: blur(12px); }
         .filter-active { background: #F59E0B !important; color: #000 !important; font-weight: 900 !important; }
+        .hide { display: none !important; }
         
         /* TICKER */
         .ticker-wrap { width: 100%; overflow: hidden; background: #F59E0B; padding: 4px 0; }
         .ticker { display: inline-block; white-space: nowrap; animation: marquee 40s linear infinite; }
         .ticker-item { display: inline-block; padding: 0 2rem; font-size: 10px; font-weight: 900; color: #000; }
         @keyframes marquee { 0% { transform: translate(0, 0); } 100% { transform: translate(-100%, 0); } }
+
+        /* MODAL KILLER STYLE */
+        #syndicate-popup { position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,0.9); display: flex; align-items: center; justify-content: center; padding: 20px; transition: opacity 0.5s ease; }
     </style>
 </head>
 <body class="pb-24">
 
+    <div id="syndicate-popup" class="hide">
+        <div class="glass p-10 rounded-3xl border-2 border-amber-500 text-center max-w-sm w-full relative">
+            <h2 class="text-2xl font-black italic text-amber-500 mb-2 uppercase tracking-tighter">Syndicate Access</h2>
+            <p class="text-[10px] text-gray-400 mb-6 font-bold uppercase tracking-widest">Auto-closing in 7 seconds...</p>
+            <a href="https://t.me/+QJx8ax575HZhMmUx" class="block w-full py-4 bg-amber-500 text-black font-black rounded-xl text-sm mb-4 uppercase tracking-widest">JOIN TELEGRAM</a>
+            <button onclick="closePopup()" class="text-[10px] text-gray-600 font-black uppercase tracking-widest p-2">Dismiss Now</button>
+        </div>
+    </div>
+
     <div class="ticker-wrap border-b border-black/10">
         <div class="ticker" id="news-ticker">
-            <span class="ticker-item">📊 NBA: LIVE ODDS SYNCED FOR JAN 28, 2026</span>
+            <span class="ticker-item">📊 NBA: LIVE ODDS SYNCED FOR 2026</span>
             <span class="ticker-item">📊 NFL: SUPER BOWL LX PROJECTIONS ACTIVE</span>
-            <span class="ticker-item">📊 NHL: RANGERS VS ISLANDERS RIVALRY NIGHT</span>
+            <span class="ticker-item">📊 NHL: RANGERS VS ISLANDERS LIVE</span>
         </div>
     </div>
 
     <header class="p-6 border-b border-white/5 sticky top-0 bg-[#050506]/95 backdrop-blur-md z-50 text-center">
         <h1 class="text-2xl font-black italic text-amber-500 gold-glow uppercase tracking-tighter">The Bookies Nightmare</h1>
-        <p class="text-[10px] text-gray-500 mt-1 uppercase tracking-widest font-bold">JANUARY 28, 2026</p>
-
         <div class="flex gap-2 mt-6 overflow-x-auto pb-2 no-scrollbar justify-center">
-            <button onclick="fetchGames('basketball_nba', this)" class="filter-active px-4 py-1.5 rounded-full text-[10px] uppercase font-bold bg-white/5 border border-white/10 transition-all">NBA</button>
-            <button onclick="fetchGames('icehockey_nhl', this)" class="px-4 py-1.5 rounded-full text-[10px] uppercase font-bold bg-white/5 border border-white/10 transition-all">NHL</button>
-            <button onclick="fetchGames('basketball_ncaa', this)" class="px-4 py-1.5 rounded-full text-[10px] uppercase font-bold bg-white/5 border border-white/10 transition-all">CBB</button>
+            <button onclick="fetchGames('basketball_nba', this)" class="filter-active px-4 py-1.5 rounded-full text-[10px] uppercase font-bold bg-white/5 border border-white/10">NBA</button>
+            <button onclick="fetchGames('icehockey_nhl', this)" class="px-4 py-1.5 rounded-full text-[10px] uppercase font-bold bg-white/5 border border-white/10">NHL</button>
         </div>
     </header>
 
     <main class="p-4 max-w-4xl mx-auto">
         <div id="game-container" class="space-y-4">
-            <p class="text-center text-gray-600 text-[10px] animate-pulse py-10 uppercase font-black tracking-widest">Syncing 2026 Feed...</p>
-        </div>
-
-        <div class="mt-12 glass p-8 rounded-[2rem] border border-white/10 text-center">
-            <h3 class="text-xl font-black italic text-white uppercase tracking-tighter mb-1">Follow the Syndicate</h3>
-            <p class="text-[10px] text-gray-500 mb-6 uppercase tracking-[0.2em]">Real-time Analysis & Prop Trends</p>
-            <div class="flex flex-col gap-3 max-w-xs mx-auto">
-                <a href="https://instagram.com/500sportspicks" class="py-4 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-all">Instagram</a>
-                <a href="https://tiktok.com/@iamsmerkishfive" class="py-4 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-all">TikTok</a>
-            </div>
+            <p class="text-center text-gray-600 text-[10px] animate-pulse py-10 uppercase font-black">Scanning Live Feed...</p>
         </div>
     </main>
-
-    <footer class="fixed bottom-0 w-full glass border-t border-white/5 p-4 flex justify-center items-center z-50">
-        <span class="text-[9px] font-black text-gray-700 uppercase tracking-widest italic">Data Engine © 2026</span>
-    </footer>
 
     <script>
         const API_KEY = '9c3c452fc836bdc1a7e6ecdb1ee7ae43';
 
+        // 1. POPUP TRIGGER (Shows after 2 seconds)
+        setTimeout(() => {
+            const popup = document.getElementById('syndicate-popup');
+            popup.classList.remove('hide');
+            
+            // 2. AUTO-CLOSE (Forces close after 7 more seconds)
+            setTimeout(() => {
+                closePopup();
+            }, 7000); 
+        }, 2000);
+
+        function closePopup() {
+            const popup = document.getElementById('syndicate-popup');
+            popup.style.opacity = '0';
+            setTimeout(() => {
+                popup.classList.add('hide');
+                popup.style.display = 'none';
+            }, 500);
+        }
+
         async function fetchGames(sportKey, btnElement) {
-            // Update UI buttons
             document.querySelectorAll('header button').forEach(btn => btn.classList.remove('filter-active'));
             if(btnElement) btnElement.classList.add('filter-active');
-
             const container = document.getElementById('game-container');
-            container.innerHTML = '<p class="text-center text-gray-600 text-[10px] animate-pulse py-10 font-black uppercase tracking-widest">Scanning API Feed...</p>';
+            container.innerHTML = '<p class="text-center text-gray-600 text-[10px] animate-pulse py-10 font-black uppercase">Syncing Odds...</p>';
 
             try {
                 const response = await fetch(`https://api.the-odds-api.com/v4/sports/${sportKey}/odds/?apiKey=${API_KEY}&regions=us&markets=h2h`);
                 const data = await response.json();
                 container.innerHTML = '';
-
-                if (!data || data.length === 0) {
-                    container.innerHTML = '<div class="glass p-12 rounded-3xl text-center text-gray-600 text-[10px] font-black uppercase tracking-widest">No Active Games Found.</div>';
-                    return;
-                }
-
                 data.slice(0, 10).forEach(game => {
                     const gameDiv = document.createElement('div');
-                    gameDiv.className = 'glass p-6 rounded-[1.5rem] border-l-4 border-amber-500 transition-all hover:translate-x-1';
-                    gameDiv.innerHTML = `
-                        <div class="flex justify-between items-center mb-4">
-                            <span class="text-[9px] font-black text-amber-500 uppercase tracking-widest">${game.sport_title}</span>
-                            <span class="text-[9px] font-bold text-gray-600 uppercase italic">${new Date(game.commence_time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
-                        </div>
-                        <div class="flex justify-between items-center px-1">
-                            <div class="text-center w-5/12"><p class="text-[13px] font-black uppercase tracking-tighter">${game.home_team}</p></div>
-                            <div class="text-gray-800 font-black italic text-[9px] px-2">VS</div>
-                            <div class="text-center w-5/12"><p class="text-[13px] font-black uppercase tracking-tighter text-right">${game.away_team}</p></div>
-                        </div>
-                    `;
+                    gameDiv.className = 'glass p-5 rounded-3xl border-l-4 border-amber-500';
+                    gameDiv.innerHTML = `<div class="flex justify-between items-center mb-3"><span class="text-[9px] font-black text-amber-500 uppercase">${game.sport_title}</span></div><div class="flex justify-between items-center px-1"><p class="text-xs font-black uppercase">${game.home_team}</p><span class="text-gray-800 font-black italic text-[9px]">VS</span><p class="text-xs font-black uppercase">${game.away_team}</p></div>`;
                     container.appendChild(gameDiv);
                 });
-            } catch (e) {
-                container.innerHTML = '<p class="text-center text-red-500 text-[10px] font-black uppercase tracking-widest">Connection Error</p>';
-            }
+            } catch (e) { container.innerHTML = '<p class="text-center text-red-500 text-[10px] font-black uppercase">Offline</p>'; }
         }
-
-        // Default Load
         fetchGames('basketball_nba');
     </script>
 </body>
