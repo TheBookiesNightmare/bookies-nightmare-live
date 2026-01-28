@@ -2,17 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THE BOOKIES NIGHTMARE | LIVE 2026</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>THE BOOKIES NIGHTMARE | 2026</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
-        body { background-color: #050506; color: #E5E7EB; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        body { background-color: #050506; color: #E5E7EB; font-family: 'Inter', sans-serif; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
         .gold-glow { text-shadow: 0 0 15px rgba(245, 158, 11, 0.4); }
         .glass { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(245, 158, 11, 0.1); backdrop-filter: blur(12px); }
-        .nav-active { color: #F59E0B; border-bottom: 2px solid #F59E0B; }
-        .filter-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s ease; }
-        .filter-active { background: #F59E0B; color: #000; font-weight: 900; border-color: #F59E0B; }
+        .filter-active { background: #F59E0B !important; color: #000 !important; font-weight: 900 !important; }
         .hide { display: none !important; }
         
         /* TICKER */
@@ -21,21 +19,23 @@
         .ticker-item { display: inline-block; padding: 0 2rem; font-size: 10px; font-weight: 900; color: #000; }
         @keyframes marquee { 0% { transform: translate(0, 0); } 100% { transform: translate(-100%, 0); } }
 
-        /* MODAL FIX */
-        #telegram-modal { background: rgba(0,0,0,0.92); backdrop-filter: blur(15px); }
+        /* MODAL FIX: High Z-Index & Clickable */
+        #telegram-modal { position: fixed; inset: 0; z-index: 9998; background: rgba(0,0,0,0.95); display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .modal-content { position: relative; z-index: 9999; width: 100%; max-width: 350px; text-align: center; }
+        .close-btn { pointer-events: auto !important; cursor: pointer !important; position: relative; z-index: 10000; }
     </style>
 </head>
 <body class="pb-24">
 
-    <div id="telegram-modal" class="fixed inset-0 z-[150] flex items-center justify-center p-6 hide">
-        <div class="glass p-8 rounded-3xl border-2 border-amber-500 max-w-sm w-full text-center relative z-[160]">
+    <div id="telegram-modal" class="hide">
+        <div class="modal-content glass p-8 rounded-3xl border-2 border-amber-500">
             <h2 class="text-2xl font-black italic text-amber-500 mb-2 uppercase">Syndicate Access</h2>
-            <p class="text-xs text-gray-400 mb-6 font-bold">You've been tracking our data for 30 seconds. Access the private chat for 2026 locks.</p>
+            <p class="text-xs text-gray-400 mb-6 font-bold uppercase tracking-widest leading-relaxed">Join 12,000+ members receiving daily 2026 locks and prop alerts.</p>
             
-            <a href="https://t.me/+QJx8ax575HZhMmUx" class="block w-full py-4 bg-amber-500 text-black font-black rounded-xl text-sm mb-6 uppercase tracking-widest shadow-lg shadow-amber-500/20">JOIN TELEGRAM</a>
+            <a href="https://t.me/+QJx8ax575HZhMmUx" class="block w-full py-4 bg-amber-500 text-black font-black rounded-xl text-sm mb-6 uppercase tracking-widest">JOIN TELEGRAM</a>
             
-            <button onclick="closeModal()" class="relative z-[200] pointer-events-auto cursor-pointer text-[10px] text-gray-500 font-black uppercase tracking-[0.2em] p-4 hover:text-white transition-colors">
-                Maybe Later
+            <button onclick="closeModal()" class="close-btn block mx-auto text-[11px] text-gray-500 font-black uppercase tracking-[0.2em] py-4 px-8">
+                [ Close & Continue ]
             </button>
         </div>
     </div>
@@ -53,29 +53,27 @@
         <p class="text-[10px] text-gray-500 mt-1 uppercase tracking-widest font-bold" id="current-date"></p>
 
         <div class="flex gap-2 mt-6 overflow-x-auto pb-2 no-scrollbar justify-center">
-            <button onclick="fetchGames('basketball_nba', this)" class="filter-btn filter-active px-4 py-1.5 rounded-full text-[10px] uppercase font-bold">NBA</button>
-            <button onclick="fetchGames('icehockey_nhl', this)" class="filter-btn px-4 py-1.5 rounded-full text-[10px] uppercase font-bold">NHL</button>
-            <button onclick="fetchGames('basketball_ncaa', this)" class="filter-btn px-4 py-1.5 rounded-full text-[10px] uppercase font-bold">CBB</button>
-            <button onclick="showNFLFallback(this)" class="filter-btn px-4 py-1.5 rounded-full text-[10px] uppercase font-bold">NFL</button>
-            <button onclick="showMLBFallback(this)" class="filter-btn px-4 py-1.5 rounded-full text-[10px] uppercase font-bold">MLB</button>
+            <button onclick="fetchGames('basketball_nba', this)" class="filter-active px-4 py-1.5 rounded-full text-[10px] uppercase font-bold bg-white/5 border border-white/10">NBA</button>
+            <button onclick="fetchGames('icehockey_nhl', this)" class="px-4 py-1.5 rounded-full text-[10px] uppercase font-bold bg-white/5 border border-white/10">NHL</button>
+            <button onclick="fetchGames('basketball_ncaa', this)" class="px-4 py-1.5 rounded-full text-[10px] uppercase font-bold bg-white/5 border border-white/10">CBB</button>
         </div>
     </header>
 
     <main class="p-4 max-w-4xl mx-auto">
         <div id="game-container" class="space-y-4">
-            <p class="text-center text-gray-600 text-xs animate-pulse py-10">Initializing Syndicate Data...</p>
+            <p class="text-center text-gray-600 text-[10px] animate-pulse py-10 uppercase font-black">Connecting to 2026 Feed...</p>
         </div>
 
         <div class="mt-8 glass p-6 rounded-3xl border border-amber-500/20 text-center">
-            <h3 class="text-lg font-black italic text-amber-500 uppercase">Today's 10-Leg Card</h3>
-            <p class="text-[10px] text-gray-500 mb-4 uppercase">Data-Synced for 2026 Season</p>
-            <a href="https://t.me/+QJx8ax575HZhMmUx" class="block py-3 bg-amber-500 text-black font-black rounded-xl text-xs uppercase">Unlock Parlay (+12000)</a>
+            <h3 class="text-lg font-black italic text-amber-500 uppercase tracking-tighter">Today's 10-Leg Card</h3>
+            <p class="text-[10px] text-gray-500 mb-4 uppercase">Direct Link to Private Telegram</p>
+            <a href="https://t.me/+QJx8ax575HZhMmUx" class="block py-3 bg-amber-500 text-black font-black rounded-xl text-xs uppercase tracking-widest">GET THE SLATE</a>
         </div>
     </main>
 
-    <footer class="fixed bottom-0 w-full glass border-t border-amber-500/20 p-4 flex justify-around items-center z-50">
-        <a href="https://t.me/+QJx8ax575HZhMmUx" class="text-[9px] font-black text-amber-500">TELEGRAM</a>
-        <a href="https://instagram.com/500sportspicks" class="text-[9px] font-black text-amber-500">INSTAGRAM</a>
+    <footer class="fixed bottom-0 w-full glass border-t border-amber-500/20 p-4 flex justify-around items-center z-[60]">
+        <a href="https://t.me/+QJx8ax575HZhMmUx" class="text-[9px] font-black text-amber-500 uppercase tracking-widest">TELEGRAM</a>
+        <a href="https://instagram.com/500sportspicks" class="text-[9px] font-black text-amber-500 uppercase tracking-widest">INSTAGRAM</a>
     </footer>
 
     <script>
@@ -84,29 +82,29 @@
 
         // MODAL LOGIC
         setTimeout(() => { 
-            document.getElementById('telegram-modal').classList.remove('hide'); 
+            const modal = document.getElementById('telegram-modal');
+            modal.classList.remove('hide');
         }, 30000);
 
         function closeModal() { 
-            const modal = document.getElementById('telegram-modal');
-            modal.style.display = 'none'; // Force hide
-            modal.classList.add('hide');   // Double check hide
+            document.getElementById('telegram-modal').classList.add('hide');
         }
 
         async function fetchGames(sportKey, btnElement) {
-            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('filter-active'));
+            // UI Toggle
+            document.querySelectorAll('header button').forEach(btn => btn.classList.remove('filter-active'));
             if(btnElement) btnElement.classList.add('filter-active');
 
             const container = document.getElementById('game-container');
-            container.innerHTML = '<p class="text-center text-gray-600 text-xs animate-pulse py-10 uppercase font-black">Scanning Odds API...</p>';
+            container.innerHTML = '<p class="text-center text-gray-600 text-[10px] animate-pulse py-10 font-black uppercase">Fetching Live Odds...</p>';
 
             try {
-                const response = await fetch(`https://api.the-odds-api.com/v4/sports/${sportKey}/odds/?apiKey=${API_KEY}&regions=us&markets=h2h,spreads`);
+                const response = await fetch(`https://api.the-odds-api.com/v4/sports/${sportKey}/odds/?apiKey=${API_KEY}&regions=us&markets=h2h`);
                 const data = await response.json();
                 container.innerHTML = '';
 
                 if (!data || data.length === 0) {
-                    container.innerHTML = '<div class="glass p-10 rounded-3xl text-center text-gray-500 text-xs">NO ACTIVE GAMES LOADED. CHECK TELEGRAM.</div>';
+                    container.innerHTML = '<div class="glass p-10 rounded-3xl text-center text-gray-600 text-[10px] font-black uppercase">No active games found. Join Telegram for VIP cards.</div>';
                     return;
                 }
 
@@ -119,28 +117,16 @@
                             <span class="text-[9px] font-bold text-gray-600 uppercase italic">${new Date(game.commence_time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
                         </div>
                         <div class="flex justify-between items-center px-2">
-                            <div class="text-center w-5/12"><p class="text-sm font-black uppercase">${game.home_team}</p></div>
-                            <div class="text-gray-800 font-black italic text-[10px]">VS</div>
-                            <div class="text-center w-5/12"><p class="text-sm font-black uppercase">${game.away_team}</p></div>
+                            <div class="text-center w-5/12"><p class="text-xs font-black uppercase tracking-tighter">${game.home_team}</p></div>
+                            <div class="text-gray-800 font-black italic text-[9px]">VS</div>
+                            <div class="text-center w-5/12"><p class="text-xs font-black uppercase tracking-tighter">${game.away_team}</p></div>
                         </div>
                     `;
                     container.appendChild(gameDiv);
                 });
             } catch (e) {
-                container.innerHTML = '<p class="text-center text-red-500 text-xs uppercase font-black">API Limit or Network Error.</p>';
+                container.innerHTML = '<p class="text-center text-red-500 text-[10px] font-black uppercase">Live Feed Unavailable. Check Telegram.</p>';
             }
-        }
-
-        function showNFLFallback(btn) {
-            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('filter-active'));
-            btn.classList.add('filter-active');
-            document.getElementById('game-container').innerHTML = `<div class="glass p-6 rounded-3xl border-l-4 border-blue-600"><h3 class="text-xl font-black uppercase">Super Bowl LX</h3><p class="text-xs text-gray-400 mt-2">Patriots vs Seahawks. Join Telegram for props.</p></div>`;
-        }
-
-        function showMLBFallback(btn) {
-            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('filter-active'));
-            btn.classList.add('filter-active');
-            document.getElementById('game-container').innerHTML = `<div class="glass p-6 rounded-3xl border-l-4 border-red-600"><h3 class="text-xl font-black uppercase">Opening Day 2026</h3><p class="text-xs text-gray-400 mt-2">March 26. Preseason data available in chat.</p></div>`;
         }
 
         fetchGames('basketball_nba');
