@@ -3,87 +3,202 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>THE BOOKIES NIGHTMARE | 2026</title>
+    <title>THE BOOKIES NIGHTMARE | AI SYNDICATE</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
-        body { background-color: #050506; color: #E5E7EB; font-family: 'Inter', sans-serif; overflow-x: hidden; }
-        .gold-glow { text-shadow: 0 0 15px rgba(245, 158, 11, 0.4); }
-        .glass { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(245, 158, 11, 0.1); backdrop-filter: blur(12px); }
-        .filter-active { background: #F59E0B !important; color: #000 !important; font-weight: 900 !important; }
+        body { background-color: #050506; color: #E5E7EB; font-family: 'Inter', sans-serif; overflow-x: hidden; margin: 0; }
+        .gold-glow { text-shadow: 0 0 20px rgba(245, 158, 11, 0.6); }
+        .glass { background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(245, 158, 11, 0.15); backdrop-filter: blur(12px); }
+        .nav-active { color: #F59E0B !important; border-bottom: 2px solid #F59E0B; }
         .hide { display: none !important; }
+        
+        /* Matrix Background */
+        #matrix-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; opacity: 0.12; pointer-events: none; }
+        
+        /* Pulse Animation for Logo */
+        @keyframes logo-heartbeat {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 20px rgba(245, 158, 11, 0.2); border-color: rgba(245, 158, 11, 0.5); }
+            50% { transform: scale(1.05); box-shadow: 0 0 40px rgba(245, 158, 11, 0.5); border-color: rgba(245, 158, 11, 1); }
+        }
+        .pulse-logo { animation: logo-heartbeat 2s infinite ease-in-out; }
+        
+        /* Loading Bar */
+        .loader-track { width: 100%; height: 2px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden; margin-top: 20px; }
+        .loader-fill { width: 0%; height: 100%; background: #F59E0B; box-shadow: 0 0 15px #F59E0B; }
+        
+        .content-layer { position: relative; z-index: 10; }
+        .live-dot { width: 8px; height: 8px; background: #F59E0B; border-radius: 50%; animation: opacityPulse 1.5s infinite; }
+        @keyframes opacityPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
     </style>
 </head>
-<body class="pb-24">
+<body class="pb-20">
 
-    <header class="p-6 border-b border-white/5 sticky top-0 bg-[#050506]/95 backdrop-blur-md z-50 text-center">
-        <h1 class="text-2xl font-black italic text-amber-500 gold-glow uppercase tracking-tighter">The Bookies Nightmare</h1>
-        <p class="text-[10px] text-gray-500 mt-1 uppercase tracking-widest font-bold">Live Analytics Engine</p>
+    <canvas id="matrix-canvas"></canvas>
 
-        <div class="flex gap-2 mt-6 overflow-x-auto pb-2 no-scrollbar justify-center">
-            <button onclick="fetchGames('basketball_nba', this)" class="filter-active px-4 py-1.5 rounded-full text-[10px] uppercase font-bold bg-white/5 border border-white/10">NBA</button>
-            <button onclick="fetchGames('icehockey_nhl', this)" class="px-4 py-1.5 rounded-full text-[10px] uppercase font-bold bg-white/5 border border-white/10">NHL</button>
-            <button onclick="fetchGames('basketball_ncaa', this)" class="px-4 py-1.5 rounded-full text-[10px] uppercase font-bold bg-white/5 border border-white/10">CBB</button>
-        </div>
-    </header>
-
-    <main class="p-4 max-w-4xl mx-auto">
-        <div id="game-container" class="space-y-4">
-            <p class="text-center text-gray-600 text-[10px] animate-pulse py-10 uppercase font-black">Connecting to API...</p>
-        </div>
-
-        <div class="mt-12 glass p-6 rounded-3xl border border-white/10 text-center">
-            <h3 class="text-sm font-black italic text-white uppercase tracking-tighter mb-4">Syndicate Socials</h3>
-            <div class="flex gap-3 justify-center">
-                <a href="https://instagram.com/500sportspicks" class="px-5 py-2 bg-white/5 border border-white/10 rounded-xl text-[9px] font-black uppercase tracking-widest">Instagram</a>
-                <a href="https://tiktok.com/@iamsmerkishfive" class="px-5 py-2 bg-white/5 border border-white/10 rounded-xl text-[9px] font-black uppercase tracking-widest">TikTok</a>
+    <section id="page-welcome" class="min-h-screen flex flex-col items-center justify-center p-6 text-center content-layer">
+        <div class="mb-10 relative">
+            <div class="absolute inset-0 bg-amber-500/10 blur-3xl rounded-full"></div>
+            <div class="relative w-32 h-32 border-2 border-amber-500 rounded-full flex items-center justify-center bg-black pulse-logo">
+                <span class="text-4xl font-black italic text-amber-500 gold-glow tracking-tighter">BN</span>
             </div>
         </div>
-    </main>
+
+        <div id="welcome-content">
+            <h1 class="text-3xl font-black italic text-white uppercase tracking-tighter mb-2">The Bookies Nightmare</h1>
+            <p class="text-amber-500 font-bold tracking-[0.4em] text-[9px] uppercase mb-10 opacity-80">Encryption Level: Gemini 2.5 Pro</p>
+            
+            <button onclick="startDecryption()" class="px-10 py-4 bg-amber-500 text-black font-black rounded-full uppercase tracking-widest text-xs hover:bg-white transition-all active:scale-95 shadow-[0_0_30px_rgba(245,158,11,0.3)]">
+                Decrypt Syndicate Feed
+            </button>
+        </div>
+
+        <div id="decryption-loader" class="hide w-64">
+            <p id="loader-status" class="text-[9px] font-black text-amber-500 uppercase tracking-[0.2em] italic mb-2">Initializing Node...</p>
+            <div class="loader-track">
+                <div id="loader-fill" class="loader-fill"></div>
+            </div>
+            <p id="loader-percent" class="text-[9px] text-gray-600 mt-3 font-black">0%</p>
+        </div>
+    </section>
+
+    <div id="main-app" class="hide content-layer">
+        <header class="p-5 border-b border-white/5 sticky top-0 bg-[#050506]/90 backdrop-blur-xl z-50">
+            <div class="flex justify-between items-center max-w-4xl mx-auto">
+                <span class="font-black italic text-amber-500 text-xl tracking-tighter">BN</span>
+                <nav class="flex gap-8 text-[9px] font-black uppercase tracking-[0.2em]">
+                    <button onclick="navigateTo('analysis')" id="nav-analysis" class="pb-1">Analysis</button>
+                    <button onclick="navigateTo('slate')" id="nav-slate" class="pb-1 text-gray-500">Live Slate</button>
+                </nav>
+            </div>
+        </header>
+
+        <main class="p-4 max-w-4xl mx-auto pt-8">
+            <section id="page-analysis" class="space-y-6 animate-in fade-in duration-700">
+                <div class="flex items-center gap-2 mb-2">
+                    <div class="live-dot"></div>
+                    <span class="text-[9px] font-black uppercase text-amber-500 tracking-widest">AI Prediction Stream Active</span>
+                </div>
+
+                <div class="glass p-8 rounded-[2rem] border-l-4 border-amber-500">
+                    <h2 class="text-[9px] font-black text-amber-500 uppercase tracking-[0.2em] mb-4">Prime Confidence Play</h2>
+                    <div class="flex justify-between items-end">
+                        <div class="space-y-1">
+                            <p class="text-2xl font-black text-white italic uppercase tracking-tighter">Lakers -4.5</p>
+                            <p class="text-[10px] text-gray-400 leading-relaxed max-w-[220px]">Model detects abnormal sharp volume on the spread. 4.2% EV detected.</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-3xl font-black text-white italic">9.2</span>
+                            <p class="text-[8px] text-gray-600 uppercase font-bold">Rating</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass p-6 rounded-3xl">
+                    <span class="text-[8px] border border-amber-500/30 text-amber-500 px-2 py-1 rounded font-bold uppercase">The Guru Parlay</span>
+                    <div class="mt-6 space-y-4">
+                        <div class="flex justify-between items-center"><p class="text-[10px] font-black uppercase text-gray-300">NBA: Lakers ML</p><span class="text-amber-500 text-[9px] font-black italic">WIN</span></div>
+                        <div class="flex justify-between items-center"><p class="text-[10px] font-black uppercase text-gray-300">NHL: Rangers Over 5.5</p><span class="text-amber-500 text-[9px] font-black italic">WIN</span></div>
+                        <div class="flex justify-between items-center"><p class="text-[10px] font-black uppercase text-gray-300">CBB: Duke -2.5</p><span class="text-amber-500 text-[9px] font-black italic">WIN</span></div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="page-slate" class="hide space-y-8">
+                <div>
+                    <h2 class="text-md font-black italic text-white uppercase border-b border-white/5 pb-3 mb-6">NBA Market Slate</h2>
+                    <div id="nba-container" class="grid grid-cols-1 gap-3"></div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="mt-24 p-10 glass border-t border-white/5 text-center">
+            <div class="flex justify-center gap-6 mb-8">
+                <a href="https://instagram.com/500sportspicks" class="text-[9px] font-black uppercase tracking-widest text-gray-400 hover:text-amber-500 transition-colors">Instagram</a>
+                <a href="https://tiktok.com/@iamsmerkishfive" class="text-[9px] font-black uppercase tracking-widest text-gray-400 hover:text-amber-500 transition-colors">TikTok</a>
+            </div>
+            <p class="text-[7px] text-gray-800 uppercase font-black tracking-[0.4em]">Prop Syndicate Data Engine • v2.6.0</p>
+        </footer>
+    </div>
 
     <script>
-        const API_KEY = '9c3c452fc836bdc1a7e6ecdb1ee7ae43';
+        // MATRIX SCRIPT
+        const canvas = document.getElementById('matrix-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const chars = "01010101BNBN$$$###";
+        const fontSize = 14;
+        const columns = canvas.width / fontSize;
+        const drops = Array(Math.floor(columns)).fill(1);
 
-        async function fetchGames(sportKey, btnElement) {
-            // Update Active Button
-            document.querySelectorAll('header button').forEach(btn => btn.classList.remove('filter-active'));
-            if(btnElement) btnElement.classList.add('filter-active');
-
-            const container = document.getElementById('game-container');
-            container.innerHTML = '<p class="text-center text-gray-600 text-[10px] animate-pulse py-10 font-black uppercase">Updating Live Feed...</p>';
-
-            try {
-                const response = await fetch(`https://api.the-odds-api.com/v4/sports/${sportKey}/odds/?apiKey=${API_KEY}&regions=us&markets=h2h`);
-                const data = await response.json();
-                container.innerHTML = '';
-
-                if (!data || data.length === 0) {
-                    container.innerHTML = '<div class="glass p-10 rounded-3xl text-center text-gray-600 text-[10px] font-black uppercase">No active games currently found.</div>';
-                    return;
-                }
-
-                data.slice(0, 10).forEach(game => {
-                    const gameDiv = document.createElement('div');
-                    gameDiv.className = 'glass p-5 rounded-3xl border-l-4 border-amber-500';
-                    gameDiv.innerHTML = `
-                        <div class="flex justify-between items-center mb-3">
-                            <span class="text-[9px] font-black text-amber-500 uppercase">${game.sport_title}</span>
-                            <span class="text-[9px] font-bold text-gray-600 uppercase font-bold italic">${new Date(game.commence_time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
-                        </div>
-                        <div class="flex justify-between items-center px-1">
-                            <div class="text-center w-5/12"><p class="text-xs font-black uppercase tracking-tighter">${game.home_team}</p></div>
-                            <div class="text-gray-800 font-black italic text-[9px]">VS</div>
-                            <div class="text-center w-5/12"><p class="text-xs font-black uppercase tracking-tighter text-right">${game.away_team}</p></div>
-                        </div>
-                    `;
-                    container.appendChild(gameDiv);
-                });
-            } catch (e) {
-                container.innerHTML = '<p class="text-center text-red-500 text-[10px] font-black uppercase">Feed Offline</p>';
+        function drawMatrix() {
+            ctx.fillStyle = "rgba(5, 5, 6, 0.15)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#F59E0B";
+            ctx.font = fontSize + "px monospace";
+            for (let i = 0; i < drops.length; i++) {
+                const text = chars[Math.floor(Math.random() * chars.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.98) drops[i] = 0;
+                drops[i]++;
             }
         }
-        // Load initial data
-        fetchGames('basketball_nba');
+        setInterval(drawMatrix, 60);
+
+        // APP LOGIC
+        const API_KEY = '9c3c452fc836bdc1a7e6ecdb1ee7ae43';
+
+        function startDecryption() {
+            document.getElementById('welcome-content').classList.add('hide');
+            document.getElementById('decryption-loader').classList.remove('hide');
+            let progress = 0;
+            const fill = document.getElementById('loader-fill');
+            const percent = document.getElementById('loader-percent');
+            const status = document.getElementById('loader-status');
+            const msgs = ["Pinging Nodes...", "Scanning Odds...", "Calculating EV...", "Access Granted"];
+
+            const interval = setInterval(() => {
+                progress += Math.random() * 5;
+                if (progress > 100) progress = 100;
+                fill.style.width = progress + '%';
+                percent.innerText = Math.floor(progress) + '%';
+                if (progress > 20) status.innerText = msgs[1];
+                if (progress > 50) status.innerText = msgs[2];
+                if (progress > 85) status.innerText = msgs[3];
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => navigateTo('analysis'), 300);
+                }
+            }, 70);
+        }
+
+        function navigateTo(page) {
+            document.getElementById('page-welcome').classList.add('hide');
+            document.getElementById('main-app').classList.remove('hide');
+            document.getElementById('page-analysis').classList.add('hide');
+            document.getElementById('page-slate').classList.add('hide');
+            document.getElementById('page-' + page).classList.remove('hide');
+            document.getElementById('nav-analysis').className = page === 'analysis' ? 'nav-active' : 'text-gray-500';
+            document.getElementById('nav-slate').className = page === 'slate' ? 'nav-active' : 'text-gray-500';
+            if (page === 'slate') fetchSlate();
+        }
+
+        async function fetchSlate() {
+            const container = document.getElementById('nba-container');
+            container.innerHTML = '<p class="text-[9px] text-gray-700 animate-pulse font-black uppercase">Decrypting Market Feed...</p>';
+            try {
+                const response = await fetch(`https://api.the-odds-api.com/v4/sports/basketball_nba/odds/?apiKey=${API_KEY}&regions=us&markets=h2h`);
+                const data = await response.json();
+                container.innerHTML = '';
+                data.slice(0, 8).forEach(game => {
+                    const card = document.createElement('div');
+                    card.className = 'glass p-5 rounded-2xl flex justify-between items-center border-l border-amber-500/50';
+                    card.innerHTML = `<div><span class="text-[8px] text-gray-600 font-black uppercase">${new Date(game.commence_time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span><br><span class="text-[10px] font-black uppercase text-white tracking-tighter">${game.home_team} vs ${game.away_team}</span></div><span class="text-[8px] font-black text-amber-500 italic uppercase">Analyzed</span>`;
+                    container.appendChild(card);
+                });
+            } catch (e) { container.innerHTML = '<p class="text-[9px] text-red-900 font-black uppercase">Link Severed</p>'; }
+        }
     </script>
 </body>
 </html>
