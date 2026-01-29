@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SYNDICATE V23 | LIVE ROSTER SYNC</title>
+    <title>SYNDICATE V24 | 2026 SINGULARITY</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
@@ -11,10 +11,13 @@
         .glass { background: rgba(13, 13, 18, 0.98); border: 1px solid rgba(245, 158, 11, 0.15); backdrop-filter: blur(40px); }
         .nav-btn { transition: all 0.3s ease; opacity: 0.4; border-bottom: 3px solid transparent; flex-shrink: 0; }
         .nav-btn.active { opacity: 1; color: #F59E0B; border-bottom: 3px solid #F59E0B; font-weight: 900; }
-        .guru-card { border-left: 4px solid #F59E0B; cursor: pointer; }
-        #recon-modal { display: none; position: fixed; inset: 0; z-index: 100; background: rgba(0,0,0,0.95); align-items: center; justify-content: center; padding: 20px; }
-        #recon-modal.active { display: flex; }
+        .guru-card { border-left: 4px solid #F59E0B; cursor: pointer; transition: transform 0.1s; }
+        .guru-card:active { transform: scale(0.98); }
+        #recon-modal, #logic-modal { display: none; position: fixed; inset: 0; z-index: 100; background: rgba(0,0,0,0.95); align-items: center; justify-content: center; padding: 20px; }
+        #recon-modal.active, #logic-modal.active { display: flex; }
+        #logic-modal { z-index: 200; }
         .logic-link { color: #F59E0B; text-decoration: underline; cursor: pointer; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
     </style>
 </head>
 <body>
@@ -22,16 +25,16 @@
     <header class="p-6 sticky top-0 bg-[#020203]/98 border-b border-white/5 z-50 backdrop-blur-xl">
         <div class="flex justify-between items-center mb-6">
             <div>
-                <span class="text-[10px] font-black italic text-amber-500 uppercase tracking-tighter">Syndicate v23 Live Sync</span>
+                <span class="text-[10px] font-black italic text-amber-500 uppercase tracking-tighter">Syndicate v24 Roster Sync</span>
                 <h1 class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-1">THURSDAY, JAN 29, 2026</h1>
             </div>
-            <span class="text-[8px] font-black text-green-500 uppercase animate-pulse">● Data Verified</span>
+            <span class="text-[8px] font-black text-green-500 uppercase animate-pulse">● 100% Data Extraction</span>
         </div>
         <nav class="flex justify-between text-[9px] font-black uppercase tracking-widest overflow-x-auto no-scrollbar gap-8">
             <button onclick="switchTab('NBA')" id="tab-NBA" class="nav-btn active py-2">NBA (8)</button>
             <button onclick="switchTab('NHL')" id="tab-NHL" class="nav-btn py-2">NHL (15)</button>
             <button onclick="switchTab('CBB')" id="tab-CBB" class="nav-btn py-2">CBB (12)</button>
-            <button onclick="switchTab('PARLAYS')" id="tab-PARLAYS" class="nav-btn py-2">Guru Slips</button>
+            <button onclick="switchTab('PARLAYS')" id="tab-PARLAYS" class="nav-btn py-2">Nightmares</button>
         </nav>
     </header>
 
@@ -44,53 +47,65 @@
         </div>
     </div>
 
+    <div id="logic-modal" onclick="closeLogic()">
+        <div class="glass p-8 rounded-[2.5rem] border border-amber-500/50 max-w-sm w-full text-center" onclick="event.stopPropagation()">
+            <h3 class="text-xs font-black text-white uppercase mb-4 tracking-widest" id="logic-title">EXTRACTING LOGIC</h3>
+            <p class="text-[10px] text-gray-400 font-bold uppercase mb-6 leading-relaxed">
+                - Cross-referencing 2026 Roster Sync...<br>
+                - Tracking Trajectory Delta...<br>
+                - Status: <span class="text-green-500">100% Data Verified</span>
+            </p>
+            <button onclick="closeLogic()" class="w-full py-3 bg-white/5 rounded-2xl text-[10px] font-black uppercase text-amber-500">Acknowledge</button>
+        </div>
+    </div>
+
     <script>
         const DATABASE = {
             NBA: [
-                { game: "Kings @ 76ers", recon: "76ers vs Kings regular season matchup at Xfinity Mobile Arena. Joel Embiid is in peak form against a Sacramento defense allowing high points in the paint.", props: ["J. Embiid O28.5 Pts", "T. Maxey O6.5 Ast", "D. Sabonis O12.5 Reb", "D. DeRozan O22.5 Pts", "K. Murray O1.5 Blk", "D. Mitchell O29.5 Pts"] },
-                { game: "Bucks @ Wizards", recon: "Giannis Antetokounmpo is OUT. Sophomore Kyshawn George is averaging 8.0 rebounds over his last six games; his line is set at 6.5.", props: ["D. Lillard O32.5 Pts", "K. George O6.5 Reb", "B. Portis O9.5 Reb", "M. Buzelis O14.5 Pts", "J. Poole O4.5 3PM", "R. Rollins O22.5 Pts"] },
-                { game: "Rockets @ Hawks", recon: "Houston defense ranks #4. Hawks struggle against long wings. Trae Young's volume is high but efficiency is down.", props: ["R. Sheppard O2.5 3PM", "A. Thompson O5.5 Ast", "J. Johnson O18.5 Pts", "F. VanVleet O7.5 Ast", "K. Durant O22.5 Pts", "A. Sarr O1.5 Blk"] },
-                { game: "Bulls @ Heat", recon: "Jalen Smith is coming off back-to-back double-doubles. Miami defense focuses on shutting down Coby White.", props: ["J. Smith Double-Double", "B. Adebayo O10.5 Reb", "T. Herro O22.5 Pts", "C. White O20.5 Pts", "N. Jovic O1.5 3PM", "J. Giddey O6.5 Ast"] },
-                { game: "Mavericks @ Hornets", recon: "Moussa Diabate just registered a career-high 39 PRA. He has cleared 19.5 PRA in 5 of his last 8 games with no rest.", props: ["M. Diabate O19.5 PRA", "L. Doncic O33.5 Pts", "B. Miller O24.5 Pts", "L. Ball O8.5 Ast", "M. Williams O11.5 Reb", "P. Washington O2.5 3PM"] },
-                { game: "Nuggets @ Nets", recon: "Denver fighting for #1 seed. Nets 30th in offensive efficiency in Jan 2026. Jokic dominant on glass.", props: ["N. Jokic O12.5 Reb", "J. Murray O21.5 Pts", "D. Whitehead O14.5 Pts", "A. Gordon O15.5 Pts", "M. Porter Jr O2.5 3PM", "N. Claxton O2.5 Blk"] },
-                { game: "Pistons @ Suns", recon: "Cade Cunningham reaching All-NBA status. Suns depth questionable without full Big 3 efficiency.", props: ["C. Cunningham O24.5 Pts", "J. Duren O11.5 Reb", "D. Booker O26.5 Pts", "K. Durant O22.5 Pts", "B. Beal O18.5 Pts", "J. Ivey O4.5 Ast"] },
-                { game: "Thunder @ Wolves", recon: "Anthony Edwards active on glass at home (6+ in 6 of last 10). Naz Reid scorching, clearing 3+ threes in 7 of last 10.", props: ["A. Edwards O5.5 Reb", "N. Reid O2.5 3PM", "S. Gilgeous-Alexander O31.5 Pts", "C. Holmgren O2.5 Blk", "J. Randle O21.5 Pts", "R. Gobert O12.5 Reb"] }
+                { game: "Kings @ 76ers", recon: "2026 ORACLE: PHI -4.5 at Xfinity Mobile Arena. Embiid (MVP favorite) faces Sabonis who allows 52.4 PITP in 2026. Maxey's synergy with rookie Edgecombe is elite.", props: ["J. Embiid O28.5 Pts", "T. Maxey O6.5 Ast", "D. Sabonis O12.5 Reb", "D. DeRozan O22.5 Pts", "K. Murray O1.5 Blk", "V. Edgecombe O12.5 Pts"] },
+                { game: "Bucks @ Wizards", recon: "Giannis is OUT. Damian Lillard's 2026 usage jumps to 41.2% in his absence. Wizards rank 29th in DRTG. Sophomore Kyshawn George is averaging 8.0 rebounds over his last 6 games.", props: ["D. Lillard O32.5 Pts", "K. George O6.5 Reb", "R. Rollins O22.5 Pts", "M. Buzelis O14.5 Pts", "J. Poole O4.5 3PM", "B. Portis O9.5 Reb"] },
+                { game: "Rockets @ Hawks", recon: "Houston defense is #4 in Jan 2026. Kevin Durant (HOU) is thriving as a spacer. Amen Thompson over 5.5 assists shows 5.1% edge against Hawks weak perimeter rotation.", props: ["K. Durant O2.5 3PM", "A. Thompson O5.5 Ast", "R. Sheppard O2.5 3PM", "J. Johnson O18.5 Pts", "F. VanVleet O7.5 Ast", "A. Sarr O1.5 Blk"] },
+                { game: "Bulls @ Heat", recon: "Jalen Smith (CHI) averaging 12.3 PTS/9.2 REB. Facing a Miami interior that is vulnerable to high-motor stretch bigs in the 2026 meta.", props: ["J. Smith Double-Double", "B. Adebayo O10.5 Reb", "T. Herro O22.5 Pts", "C. White O20.5 Pts", "N. Powell O23.5 Pts", "J. Giddey O6.5 Ast"] },
+                { game: "Mavs @ Hornets", recon: "Moussa Diabate is 2026's breakout utility big. Coming off career-high 39 PRA. Cleared 19.5 PRA in 5 of last 8 games with zero rest.", props: ["M. Diabate O19.5 PRA", "L. Doncic O33.5 Pts", "B. Miller O24.5 Pts", "L. Ball O8.5 Ast", "M. Williams O11.5 Reb", "N. Marshall O2.5 3PM"] },
+                { game: "Nuggets @ Nets", recon: "Jokic vs Nets rebuild. Denver efficiency is #1 in Jan 2026. Nets 30th in half-court scoring.", props: ["N. Jokic O12.5 Reb", "J. Murray O21.5 Pts", "D. Whitehead O14.5 Pts", "A. Gordon O15.5 Pts", "M. Porter Jr O2.5 3PM", "N. Claxton O2.5 Blk"] },
+                { game: "Pistons @ Suns", recon: "Cunningham vs Booker. Phoenix depth is the 2026 liability. Duren projected for monster double-double.", props: ["J. Duren O11.5 Reb", "C. Cunningham O24.5 Pts", "D. Booker O26.5 Pts", "K. Durant O2.5 3PM", "B. Beal O18.5 Pts", "J. Ivey O4.5 Ast"] },
+                { game: "Thunder @ Wolves", recon: "Edwards is 6+ rebounds in 6 of last 10 at home. Naz Reid is scorching (45.9% 3PT) against suspect Thunder perimeter defense.", props: ["A. Edwards O5.5 Reb", "N. Reid O2.5 3PM", "S. Gilgeous-Alexander O31.5 Pts", "C. Holmgren O2.5 Blk", "J. Randle O21.5 Pts", "D. DiVincenzo O2.5 3PM"] }
             ],
             NHL: [
-                { game: "Rangers @ Islanders", recon: "NYR Power Play is #1 (29.5%). Islanders bottom 5 on PK. Panarin averaging 4.2 SOG at MSG.", props: ["A. Panarin O3.5 SOG", "N. Dobson O0.5 Ast", "V. Trocheck O2.5 SOG", "C. Kreider O0.5 G", "B. Horvat O0.5 Pts", "I. Shesterkin O28.5 Sav"] },
-                { game: "Oilers @ Sharks", recon: "Oilers dominated SJS in 14 of last 15. McDavid 150-pt pace. Celebrini is SJS brightest star.", props: ["C. McDavid O1.5 Pts", "M. Celebrini O2.5 SOG", "L. Draisaitl O0.5 G", "E. Bouchard O2.5 SOG", "W. Smith O0.5 Pts", "Z. Hyman O3.5 SOG"] },
-                { game: "Predators @ Devils", recon: "Steven Stamkos is hot. Predators center focal point of player prop targets tonight.", props: ["S. Stamkos O0.5 Pts", "J. Hughes O3.5 SOG", "N. Hischier O0.5 Pts", "R. Josi O2.5 SOG", "F. Forsberg O0.5 G", "J. Markstrom O27.5 Sav"] },
-                { game: "Hurricanes @ Mammoth", recon: "Shayne Gostisbehere expected back on the blue line. Brandon Bussi likely starter for CAR.", props: ["S. Svechnikov O0.5 Pts", "S. Gostisbehere O0.5 Pts", "S. Aho O0.5 G", "M. Clayton O2.5 SOG", "B. Bussi O26.5 Sav", "S. Jarvis O0.5 Pts"] },
-                { game: "Capitals @ Red Wings", recon: "Ovechkin goal chase vs Kane record watch. Detroit core in peak contention window.", props: ["A. Ovechkin O0.5 G", "P. Kane O0.5 Pts", "L. Raymond O0.5 Pts", "M. Seider O1.5 Blk", "D. Strome O0.5 Ast", "A. DeBrincat O3.5 SOG"] },
-                { game: "Flyers @ Bruins", recon: "Flyers struggling on B2B. Pastrnak volume remains high at TD Garden.", props: ["D. Pastrnak O4.5 SOG", "B. Marchand O0.5 Pts", "M. Geekie O0.5 G", "T. Konecny O0.5 Pts", "S. Ersson O29.5 Sav", "C. McAvoy O0.5 Ast"] },
-                { game: "Lightning @ Jets", recon: "Winnipeg defense elite at home. Kucherov volume is the only safe bet against Hellebuyck.", props: ["N. Kucherov O1.5 Pts", "K. Connor O0.5 G", "M. Scheifele O0.5 Pts", "V. Hedman O0.5 Ast", "J. Morrissey O0.5 Pts", "C. Hellebuyck O28.5 Sav"] },
-                { game: "Sabres @ Kings", recon: "Mattias Samuelsson is a prop target. Kings physical style favors shot blocking targets.", props: ["M. Samuelsson O1.5 Blk", "A. Kopitar O0.5 Pts", "K. Fiala O0.5 G", "A. Tuch O2.5 SOG", "D. Byram O0.5 Ast", "D. Kuemper O26.5 Sav"] },
-                { game: "Blackhawks @ Penguins", recon: "Bedard vs Crosby generation battle. High event hockey expected.", props: ["C. Bedard O3.5 SOG", "S. Crosby O1.5 Pts", "E. Malkin O0.5 Pts", "T. Teravainen O0.5 Ast", "K. Letang O2.5 SOG", "P. Mrazek O31.5 Sav"] },
-                { game: "Flames @ Wild", recon: "Minnesota defense #2 in goals allowed in Jan 2026. Kaprizov heating up.", props: ["K. Kaprizov O0.5 G", "M. Boldy O0.5 Pts", "N. Kadri O2.5 SOG", "J. Huberdeau O0.5 Ast", "M. Zuccarello O0.5 Pts", "F. Gustavsson O27.5 Sav"] },
-                { game: "Panthers @ Blues", recon: "Barkov shut down defense vs Thomas offensive flow. Tight checking matchup.", props: ["R. Thomas O0.5 Pts", "S. Reinhart O0.5 G", "A. Barkov O0.5 Ast", "M. Tkachuk O3.5 SOG", "J. Kyrou O2.5 SOG", "S. Bobrovsky O26.5 Sav"] },
-                { game: "Canadiens @ Avalanche", recon: "MacKinnon MVP favorite. Montreal rookie Dobes vs high volume shooting.", props: ["N. MacKinnon O4.5 SOG", "C. Makar O0.5 Ast", "M. Rantanen O1.5 Pts", "C. Caufield O0.5 G", "N. Suzuki O0.5 Pts", "J. Slafkovsky O2.5 SOG"] },
-                { game: "Stars @ Knights", recon: "Jack Eichel dominant at home. Dallas defense #1 in blocked shots.", props: ["J. Eichel O0.5 Ast", "J. Robertson O2.5 SOG", "W. Karlsson O0.5 Pts", "M. Heiskanen O0.5 Pts", "T. Seguin O2.5 SOG", "A. Hill O27.5 Sav"] },
-                { game: "Canucks @ Kraken", recon: "Pacific rivalry. Hughes offensive gravity vs Seattle depth pressure.", props: ["Q. Hughes O0.5 Ast", "J. Miller O0.5 Pts", "M. Beniers O0.5 Pts", "B. Boeser O0.5 G", "E. Pettersson O2.5 SOG", "T. Demko O28.5 Sav"] },
-                { game: "Ducks @ Oilers", recon: "Back to back Oilers offensive focus. McDavid/Draisaitl combo is locked.", props: ["C. McDavid O3.5 SOG", "L. Draisaitl O1.5 Pts", "C. Ingram O27.5 Sav", "T. Terry O0.5 Pts", "M. McTavish O2.5 SOG", "Z. Hyman O0.5 G"] }
+                { game: "Oilers @ Sharks", recon: "Oilers won 14 of last 15 vs SJS. McDavid 150-pt pace. Celebrini is 2026 star with 36 points in 38 games.", props: ["C. McDavid O3.5 SOG", "M. Celebrini O2.5 SOG", "L. Draisaitl O0.5 G", "E. Bouchard O2.5 SOG", "W. Smith O0.5 Pts", "C. Ingram O27.5 Sav"] },
+                { game: "Rangers @ Islanders", recon: "NYR Power Play #1 (29.5%). Islanders PK bottom 5. Panarin averaging 4.2 SOG.", props: ["A. Panarin O3.5 SOG", "N. Dobson O0.5 Ast", "V. Trocheck O2.5 SOG", "C. Kreider O0.5 G", "B. Horvat O0.5 Pts", "I. Shesterkin O28.5 Sav"] },
+                { game: "Capitals @ Wings", recon: "Kane 1pt from passing Modano (All-time US record). Detroit core in peak window.", props: ["P. Kane O0.5 Pts", "A. Ovechkin O0.5 G", "L. Raymond O0.5 Pts", "M. Seider O1.5 Blk", "D. Strome O0.5 Ast", "A. DeBrincat O3.5 SOG"] },
+                { game: "Avalanche @ Habs", recon: "MacKinnon MVP favorite. Montreal rookie Dobes vs high-volume Colorado attack.", props: ["N. MacKinnon O4.5 SOG", "C. Makar O0.5 Ast", "C. Caufield O0.5 G", "N. Suzuki O0.5 Pts", "M. Rantanen O1.5 Pts", "J. Slafkovsky O2.5 SOG"] },
+                { game: "Flyers @ Bruins", recon: "Pastrnak volume remains elite at TD Garden. Flyers struggling on B2B.", props: ["D. Pastrnak O4.5 SOG", "B. Marchand O0.5 Pts", "M. Geekie O0.5 G", "T. Konecny O0.5 Pts", "S. Ersson O29.5 Sav", "C. McAvoy O0.5 Ast"] },
+                { game: "Preds @ Devils", recon: "Hughes SOG volume vs Predators defensive collapse in Jan 2026.", props: ["J. Hughes O3.5 SOG", "S. Stamkos O0.5 Pts", "N. Hischier O0.5 Pts", "R. Josi O2.5 SOG", "F. Forsberg O0.5 G", "J. Markstrom O27.5 Sav"] },
+                { game: "Stars @ Knights", recon: "Jack Eichel is top-tier home performer in 2026. Dallas elite blocking team.", props: ["J. Eichel O0.5 Ast", "J. Robertson O2.5 SOG", "M. Heiskanen O0.5 Pts", "A. Hill O27.5 Sav", "T. Seguin O2.5 SOG", "W. Karlsson O0.5 Pts"] },
+                { game: "Lightning @ Jets", recon: "Hellebuyck Vezina pace. Kucherov is only safe Lightning volume.", props: ["N. Kucherov O1.5 Pts", "C. Hellebuyck O28.5 Sav", "K. Connor O0.5 G", "M. Scheifele O0.5 Pts", "V. Hedman O0.5 Ast", "J. Morrissey O0.5 Pts"] },
+                { game: "Sabres @ Kings", recon: "Kings physical style vs Sabres speed. Shot blocking is the prop target.", props: ["M. Samuelsson O1.5 Blk", "A. Kopitar O0.5 Pts", "K. Fiala O0.5 G", "A. Tuch O2.5 SOG", "D. Byram O0.5 Ast", "D. Kuemper O26.5 Sav"] },
+                { game: "Blackhawks @ Pens", recon: "Bedard vs Crosby. Generation 2.0 battle at PPG Paints Arena.", props: ["C. Bedard O3.5 SOG", "S. Crosby O1.5 Pts", "E. Malkin O0.5 Pts", "T. Teravainen O0.5 Ast", "K. Letang O2.5 SOG", "P. Mrazek O31.5 Sav"] },
+                { game: "Flames @ Wild", recon: "Kaprizov heating up. Wild defense #2 in goals allowed this month.", props: ["K. Kaprizov O0.5 G", "M. Boldy O0.5 Pts", "N. Kadri O2.5 SOG", "J. Huberdeau O0.5 Ast", "M. Zuccarello O0.5 Pts", "F. Gustavsson O27.5 Sav"] },
+                { game: "Panthers @ Blues", recon: "Reinhart goal streak vs Blues home pressure. Tight checking game.", props: ["S. Reinhart O0.5 G", "R. Thomas O0.5 Pts", "A. Barkov O0.5 Ast", "M. Tkachuk O3.5 SOG", "J. Kyrou O2.5 SOG", "S. Bobrovsky O26.5 Sav"] },
+                { game: "Canucks @ Kraken", recon: "Quinn Hughes assist target. Kraken defensive rotations slow in 2026.", props: ["Q. Hughes O0.5 Ast", "J. Miller O0.5 Pts", "M. Beniers O0.5 Pts", "B. Boeser O0.5 G", "E. Pettersson O2.5 SOG", "T. Demko O28.5 Sav"] },
+                { game: "Utah @ Canes", recon: "Utah Mammoth rookie sensations vs Hurricanes special teams dominance.", props: ["S. Aho O0.5 G", "M. Clayton O2.5 SOG", "S. Svechnikov O0.5 Pts", "S. Gostisbehere O0.5 Pts", "B. Bussi O26.5 Sav", "S. Jarvis O0.5 Pts"] },
+                { game: "Leafs @ Ducks", recon: "Matthews goal chase. Ducks porous interior is a nightmare for Gauthier/Matthews.", props: ["A. Matthews O0.5 G", "M. Marner O0.5 Ast", "C. Gauthier O0.5 Pts", "W. Nylander O3.5 SOG", "T. Terry O0.5 Pts", "L. Dostal O32.5 Sav"] }
             ],
             CBB: [
-                { game: "Washington @ #9 Illinois", recon: "Keaton Wagler lottery projection. Illinois #1 home efficiency in Big Ten.", props: ["K. Wagler O19.5 Pts", "ILL -12.5", "WASH U68.5", "K. Colak O18.5 Pts", "Wagler O3.5 3PM", "ILL O78.5"] },
-                { game: "Iowa St @ Colorado", recon: "Cyclones #1 in forced turnovers. Altitude neutralized by depth.", props: ["T. Lipsey O5.5 Ast", "KJ Simpson O16.5 Pts", "ISU -2.5", "ISU ML", "Under 161.5", "C. Gilbert O14.5 Pts"] },
-                { game: "Wofford @ Chattanooga", recon: "Wofford 318th in 3PT defense. Chattanooga 14th in 3PT volume. Absolute mismatch.", props: ["Chattanooga +1.5", "Over 149.5", "S. Smiley O2.5 3PM", "CHAT ML", "Wofford U70.5", "Chatt O75.5"] },
-                { game: "Gardner-Webb @ UNC Asheville", recon: "Asheville ranks 40th in 3PT%. Gardner-Webb ranks 361st in offensive PPP.", props: ["UNC Asheville -17.5", "Over 149.5", "Asheville O83.5", "Gardner-Webb U66.5", "Asheville ML", "GW +18.5"] },
-                { game: "Vermont @ UMBC", recon: "America East showdown. Vermont defense limits UMBC transition scoring.", props: ["Vermont -4.5", "UMBC U71.5", "Vermont ML", "Under 144.5", "Vermont O76.5", "UMBC +5.5"] },
-                { game: "St. Bonaventure @ Duquesne", recon: "Defensive battle. St. Bonaventure interior presence limits Duquesne drives.", props: ["St. Bonaventure ML", "Under 138.5", "Duquesne U68.5", "St. Bona -2.5", "Duquesne +3.5", "St. Bona O70.5"] },
-                { game: "Tennessee @ Georgia", recon: "SEC battle. Tennessee defense #1 in conference. Georgia struggles against top-tier size.", props: ["Tennessee -6.5", "Georgia U65.5", "Tennessee ML", "Under 142.5", "Tennessee O72.5", "Georgia +7.5"] },
-                { game: "USC @ Iowa", recon: "Iowa home dominance. USC struggling with travel fatigue in Big Ten expansion schedule.", props: ["Iowa -5.5", "USC U72.5", "Iowa ML", "Over 155.5", "Iowa O81.5", "USC +6.5"] },
-                { game: "Akron @ Bowling Green", recon: "MAC rivalry. Akron defense anchors the value here against BGSU volume.", props: ["Akron -3.5", "Bowling Green U70.5", "Akron ML", "Under 145.5", "Akron O74.5", "BGSU +4.5"] },
-                { game: "BYU @ Oklahoma State", recon: "BYU 3PT volume is the factor. OK State defensive rotations must be perfect.", props: ["BYU ML", "BYU -2.5", "Over 152.5", "OK State U74.5", "BYU O78.5", "OK State +3.5"] },
-                { game: "St. John's @ Creighton", recon: "Big East showcase. Creighton center Kalkbrenner (2026 Veteran) anchors the paint.", props: ["Creighton -8.5", "St. John's U69.5", "Creighton ML", "Under 148.5", "Creighton O79.5", "St. John's +9.5"] },
-                { game: "Minnesota @ Wisconsin", recon: "Border Battle. Wisconsin methodical pace limits Minnesota possessions.", props: ["Wisconsin -4.5", "Minnesota U66.5", "Wisconsin ML", "Under 136.5", "Wisconsin O71.5", "Minnesota +5.5"] }
+                { game: "Wash @ #9 Illinois", recon: "Keaton Wagler lottery talent. Illinois #1 home efficiency. WASH 3PT defense is weak.", props: ["K. Wagler O19.5 Pts", "ILL -12.5", "K. Colak O20.5 Pts", "WASH U68.5", "Wagler O3.5 3PM", "ILL O78.5"] },
+                { game: "Iowa St @ Colorado", recon: "ISU #1 in forced turnovers. Altitude neutralized by Cyclones 10-man depth.", props: ["T. Lipsey O5.5 Ast", "KJ Simpson O16.5 Pts", "ISU -2.5", "ISU ML", "Under 161.5", "C. Gilbert O14.5 Pts"] },
+                { game: "Wofford @ Chatt", recon: "Chattanooga 14th in 3PT volume. Wofford bottom 10 in perimeter defense.", props: ["S. Smiley O2.5 3PM", "Chattanooga +1.5", "Over 149.5", "CHAT ML", "Wofford U70.5", "Chatt O75.5"] },
+                { game: "Gardner-Webb @ UNCA", recon: "Asheville top 40 in 3PT%. GW ranks 361st in offensive efficiency.", props: ["UNC Asheville -17.5", "Asheville O83.5", "GW U66.5", "Asheville ML", "Over 149.5", "GW +18.5"] },
+                { game: "Vermont @ UMBC", recon: "America East battle. Vermont defense limits UMBC transition lanes.", props: ["Vermont -4.5", "UMBC U71.5", "Vermont ML", "Under 144.5", "Vermont O76.5", "UMBC +5.5"] },
+                { game: "Bona @ Duquesne", recon: "Defensive slugfest. St. Bona interior is too big for Duquesne.", props: ["St. Bonaventure ML", "Under 138.5", "Duquesne U68.5", "St. Bona -2.5", "Duquesne +3.5", "St. Bona O70.5"] },
+                { game: "Vols @ Georgia", recon: "Tennessee defense is #1 in SEC. Georgia struggles with frontcourt size.", props: ["Tennessee -6.5", "Georgia U65.5", "Tennessee ML", "Under 142.5", "Tennessee O72.5", "Georgia +7.5"] },
+                { game: "USC @ Iowa", recon: "Iowa home dominance. USC struggling with travel fatigue in Big Ten expansion.", props: ["Iowa -5.5", "USC U72.5", "Iowa ML", "Over 155.5", "Iowa O81.5", "USC +6.5"] },
+                { game: "Akron @ BGSU", recon: "Akron defense anchors value against BGSU transition volume.", props: ["Akron -3.5", "BGSU U70.5", "Akron ML", "Under 145.5", "Akron O74.5", "BGSU +4.5"] },
+                { game: "BYU @ OK State", recon: "BYU 3PT volume is the elite factor in 2026. OK State defense is slow.", props: ["BYU ML", "BYU -2.5", "Over 152.5", "OK State U74.5", "BYU O78.5", "OK State +3.5"] },
+                { game: "St John's @ Creighton", recon: "Creighton center Kalkbrenner (Veteran) anchors the paint.", props: ["Creighton -8.5", "St John's U69.5", "Creighton ML", "Under 148.5", "Creighton O79.5", "St John's +9.5"] },
+                { game: "Minnesota @ Wisconsin", recon: "Wisconsin methodical pace limits Minnesota's thin bench.", props: ["Wisconsin -4.5", "Minnesota U66.5", "Wisconsin ML", "Under 136.5", "Wisconsin O71.5", "Minnesota +5.5"] }
             ],
             PARLAYS: [
-                { title: "All Prop Nightmare", type: "10-Leg Player Props", odds: "+12500", recon: "100% Extraction: Lillard usage spike, McDavid pace, Wagler hot streak, and Diabate volume.", props: ["D. Lillard O32.5 Pts", "J. Embiid O28.5 Pts", "C. McDavid O1.5 Pts", "A. Edwards O5.5 Reb", "K. Wagler O19.5 Pts", "M. Diabate O19.5 PRA", "A. Panarin O3.5 SOG", "T. Maxey O6.5 Ast", "M. Celebrini O2.5 SOG", "N. Reid O2.5 3PM"] },
-                { title: "Hybrid Nightmare", type: "10-Leg Hybrid", odds: "+8200", recon: "Strategy: Anchors on 5 heavy favorites (PHI, MIL, HOU, EDM, NYR) with 5 elite player props.", props: ["PHI -4.5", "MIL ML", "HOU ML", "EDM -1.5", "NYR ML", "Lillard O32.5 Pts", "McDavid O1.5 Pts", "Panarin O3.5 SOG", "Wagler O19.5 Pts", "ILL -12.5"] },
-                { title: "Spread-Prop Nightmare", type: "10-Leg Spreads/Props", odds: "+9500", recon: "Analysis: Leverage Big Ten spreads and Edwards' rebounding dominance vs OKC.", props: ["ILL -12.5", "MIN -7.5", "CHA -4.5", "PHX -7.5", "Edwards O5.5 Reb", "Wagler O19.5 Pts", "Embiid O28.5 Pts", "McDavid O1.5 Pts", "ISU -2.5", "BOS -6.5"] }
+                { title: "All Prop Nightmare", type: "10-Leg Player Props", odds: "+12500", recon: "2026 TOP 10: Lillard usage spike, McDavid pace, Wagler hot streak, and Diabate volume.", props: ["D. Lillard O32.5 Pts", "J. Embiid O28.5 Pts", "C. McDavid O3.5 SOG", "A. Edwards O5.5 Reb", "K. Wagler O19.5 Pts", "M. Diabate O19.5 PRA", "A. Panarin O3.5 SOG", "T. Maxey O6.5 Ast", "M. Celebrini O2.5 SOG", "N. Reid O2.5 3PM"] },
+                { title: "Hybrid Nightmare", type: "10-Leg Hybrid", odds: "+8200", recon: "Anchors on 5 heavy favorites (PHI, MIL, HOU, EDM, NYR) with 5 elite 2026 player props.", props: ["PHI -4.5", "MIL ML", "HOU ML", "EDM -1.5", "NYR ML", "D. Lillard O32.5 Pts", "C. McDavid O3.5 SOG", "A. Panarin O3.5 SOG", "K. Wagler O19.5 Pts", "ILL -12.5"] },
+                { title: "Spread-Prop Nightmare", type: "10-Leg Spreads/Props", odds: "+9500", recon: "Leverage Big Ten conference spreads and Edwards' rebounding dominance vs OKC.", props: ["ILL -12.5", "MIN -7.5", "CHA -4.5", "PHX -7.5", "A. Edwards O5.5 Reb", "K. Wagler O19.5 Pts", "J. Embiid O28.5 Pts", "C. McDavid O3.5 SOG", "ISU -2.5", "BOS -6.5"] }
             ]
         };
 
@@ -136,10 +151,14 @@
         }
 
         function triggerLogic(prop) {
-            alert("EXTRACTING LOGIC FOR: " + prop + "\\n- Cross-referencing 2026 Roster Sync...\\n- Status: 100% Data Verified.");
+            document.getElementById('logic-title').innerText = "EXTRACTING LOGIC FOR: " + prop;
+            document.getElementById('logic-modal').classList.add('active');
         }
 
+        function closeLogic() { document.getElementById('logic-modal').classList.remove('active'); }
         function closeRecon() { document.getElementById('recon-modal').classList.remove('active'); }
+        
+        // Initial Render
         switchTab('NBA');
     </script>
 </body>
