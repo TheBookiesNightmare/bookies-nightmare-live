@@ -3,209 +3,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>THE BOOKIES NIGHTMARE | V5 FAMOUS FIVE</title>
+    <title>SYNDICATE V12 | RIVALRY SYNC</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
-        body { background-color: #050506; color: #E5E7EB; font-family: 'Inter', sans-serif; overflow-x: hidden; margin: 0; }
-        .gold-glow { text-shadow: 0 0 20px rgba(245, 158, 11, 0.6); }
-        .glass { background: rgba(0, 0, 0, 0.8); border: 1px solid rgba(245, 158, 11, 0.1); backdrop-filter: blur(15px); }
+        body { background-color: #040405; color: #E5E7EB; font-family: 'Inter', sans-serif; overflow-x: hidden; margin: 0; }
+        .glass { background: rgba(10, 10, 12, 0.98); border: 1px solid rgba(245, 158, 11, 0.1); backdrop-filter: blur(30px); }
         .nav-active { color: #F59E0B !important; border-bottom: 2px solid #F59E0B; }
         .hide { display: none !important; }
-        #matrix-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; opacity: 0.1; pointer-events: none; }
-        .loader-fill { width: 0%; height: 100%; background: #F59E0B; box-shadow: 0 0 20px #F59E0B; transition: width 0.1s linear; }
-        .risk-low { color: #10B981; } .risk-med { color: #F59E0B; } .risk-high { color: #EF4444; }
+        .bar-container { display: flex; align-items: flex-end; gap: 4px; height: 50px; }
+        .bar { background: rgba(245, 158, 11, 0.2); width: 100%; border-radius: 2px; }
+        .bar-active { background: #F59E0B; }
+        #modal-container { transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); transform: translateY(100%); }
+        #modal-container.show { transform: translateY(0); }
     </style>
 </head>
 <body class="pb-24">
 
-    <canvas id="matrix-canvas"></canvas>
-
-    <section id="page-welcome" class="min-h-screen flex flex-col items-center justify-center p-6 text-center relative z-10">
-        <div class="mb-8 w-28 h-28 border-2 border-amber-500 rounded-full flex items-center justify-center bg-black pulse-logo">
-            <span class="text-3xl font-black italic text-amber-500 gold-glow uppercase">BN</span>
+    <header class="p-4 border-b border-white/5 sticky top-0 bg-[#040405]/95 backdrop-blur-xl z-50">
+        <div class="flex justify-between items-center mb-4 px-2">
+            <div class="flex items-center gap-2">
+                <span class="w-2 h-2 bg-amber-500 rounded-full animate-pulse"></span>
+                <span class="text-[10px] font-black italic text-amber-500 uppercase">V12 RIVALRY SYNC</span>
+            </div>
+            <span class="text-[8px] font-bold text-gray-500 uppercase tracking-widest">JAN 28, 2026</span>
         </div>
-        <div id="welcome-content">
-            <h1 class="text-3xl font-black italic text-white uppercase tracking-tighter">The Syndicate Vault</h1>
-            <p class="text-[9px] text-amber-500 tracking-[0.5em] uppercase mt-2">v5.0.0 Deep Data Entry</p>
-            <button onclick="startDecryption()" class="mt-10 px-12 py-4 bg-amber-500 text-black font-black rounded-full uppercase tracking-widest text-[10px] shadow-2xl active:scale-90 transition-transform">Decrypt Master Feed</button>
+
+        <nav class="flex gap-6 text-[7px] font-black uppercase tracking-[0.2em] justify-center">
+            <button onclick="navigateTo('props')" id="nav-props" class="nav-active">Prop Lab</button>
+            <button onclick="navigateTo('famousfive')" id="nav-famousfive" class="text-gray-600">Famous Five</button>
+            <button onclick="navigateTo('intel')" id="nav-intel" class="text-gray-600">Injury Hub</button>
+        </nav>
+    </header>
+
+    <main class="p-4 max-w-4xl mx-auto">
+        <section id="page-props" class="grid grid-cols-1 md:grid-cols-2 gap-3"></section>
+        <section id="page-famousfive" class="hide"></section>
+        <section id="page-intel" class="hide"></section>
+    </main>
+
+    <div id="modal-container" class="fixed inset-0 z-[100] bg-black/95 backdrop-blur-xl flex items-end hide">
+        <div class="w-full glass rounded-t-[2.5rem] p-8 border-t border-amber-500/30">
+            <div id="modal-content" class="max-w-2xl mx-auto pb-8"></div>
+            <button onclick="closeModal()" class="w-full py-4 bg-white/5 rounded-2xl text-[9px] font-black uppercase tracking-widest text-gray-400">Close Syndicate Node</button>
         </div>
-        <div id="decryption-loader" class="hide w-72">
-            <p id="loader-status" class="text-[8px] font-black text-amber-500 uppercase tracking-widest italic mb-2">Analyzing 50+ Global Markets...</p>
-            <div class="h-[1px] w-full bg-white/10 overflow-hidden"><div id="loader-fill" class="loader-fill"></div></div>
-        </div>
-    </section>
-
-    <div id="main-app" class="hide relative z-10">
-        <header class="p-4 border-b border-white/5 sticky top-0 bg-[#050506]/95 backdrop-blur-xl z-50">
-            <nav class="flex gap-4 text-[7px] font-black uppercase tracking-[0.2em] justify-center overflow-x-auto whitespace-nowrap">
-                <button onclick="navigateTo('analysis')" id="nav-analysis" class="nav-active">Analysis</button>
-                <button onclick="navigateTo('props')" id="nav-props" class="text-gray-500">30+ Props</button>
-                <button onclick="navigateTo('predictions')" id="nav-predictions" class="text-gray-500">15+ Lines</button>
-                <button onclick="navigateTo('famousfive')" id="nav-famousfive" class="text-gray-500 text-amber-500">Famous Five</button>
-                <button onclick="navigateTo('slate')" id="nav-slate" class="text-gray-500">Slate</button>
-            </nav>
-        </header>
-
-        <main class="p-4 max-w-4xl mx-auto">
-            <section id="page-analysis" class="space-y-6 pt-6">
-                <div class="glass p-8 rounded-3xl border-l-4 border-amber-500">
-                    <span class="text-[8px] font-black text-amber-500 uppercase tracking-widest">Master Consensus</span>
-                    <p class="text-3xl font-black text-white italic uppercase mt-2">Celtics -6.5</p>
-                    <p class="text-[10px] text-gray-500 mt-2 uppercase">Risk: Low | Edge: +5.2% | Confidence: 9.4/10</p>
-                </div>
-            </section>
-
-            <section id="page-props" class="hide space-y-4 pt-4">
-                <h2 class="text-lg font-black italic text-white uppercase">Prop Lab <span class="text-amber-500">(30 Active)</span></h2>
-                <div id="prop-grid" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
-            </section>
-
-            <section id="page-predictions" class="hide space-y-6 pt-4">
-                <h2 class="text-lg font-black italic text-white uppercase">Market Predictions <span class="text-amber-500">(15 Games)</span></h2>
-                <div id="prediction-list" class="space-y-3"></div>
-            </section>
-
-            <section id="page-famousfive" class="hide space-y-6 pt-4">
-                <div class="text-center mb-8">
-                    <h2 class="text-2xl font-black italic text-amber-500 uppercase gold-glow">The Famous Five</h2>
-                    <p class="text-[9px] text-gray-500 uppercase tracking-widest mt-1">High-Efficiency Syndicate Parlay</p>
-                </div>
-                
-                <div class="space-y-4">
-                    <div class="glass p-6 rounded-3xl border border-amber-500/30">
-                        <h3 class="text-[10px] font-black text-amber-500 uppercase tracking-widest mb-4">5-Leg Moneyline Lock</h3>
-                        <div id="ff-ml" class="space-y-3"></div>
-                    </div>
-                    
-                    <div class="glass p-6 rounded-3xl border border-white/10">
-                        <h3 class="text-[10px] font-black text-white uppercase tracking-widest mb-4">5-Leg Player Prop Vault</h3>
-                        <div id="ff-props" class="space-y-3"></div>
-                    </div>
-                </div>
-            </section>
-
-            <section id="page-slate" class="hide pt-4">
-                <div id="slate-container" class="space-y-2"></div>
-            </section>
-        </main>
     </div>
 
     <script>
-        const API_KEY = '9c3c452fc836bdc1a7e6ecdb1ee7ae43';
+        // LIVE 2026 DATA: JAN 28 MATCHUPS
+        const props = [
+            { 
+                name: "Donovan Mitchell", team: "CLE", opp: "LAL", line: "Over 31.5 Pts", 
+                last10: [33, 35, 48, 32, 30, 31, 29, 34, 36, 40],
+                h2h: { pts: 45, reb: 5, ast: 8, date: "Nov 2025" },
+                note: "Exploded for 45 last time vs LAL. With Garland out, he is the undisputed #1 option tonight."
+            },
+            { 
+                name: "Luka Doncic", team: "LAL", opp: "CLE", line: "Over 30.5 Pts", 
+                last10: [32, 28, 44, 30, 31, 29, 33, 30, 35, 31],
+                h2h: { pts: 38, reb: 11, ast: 12, date: "Dec 2025" },
+                note: "Averaging 33.4 PPG on the season. Scored 38 last time against Cleveland's defense."
+            },
+            { 
+                name: "Anthony Edwards", team: "MIN", opp: "DAL", line: "Over 29.5 Pts", 
+                last10: [26, 28, 55, 31, 24, 30, 22, 33, 29, 35],
+                h2h: { pts: 44, reb: 6, ast: 3, date: "Dec 25, 2025" },
+                note: "Torched Dallas for 44 on Christmas Day. DAL wing defense is struggling lately."
+            }
+        ];
 
-        function startDecryption() {
-            document.getElementById('welcome-content').classList.add('hide');
-            document.getElementById('decryption-loader').classList.remove('hide');
-            let progress = 0;
-            const fill = document.getElementById('loader-fill');
-            const interval = setInterval(() => {
-                progress += 1.5;
-                fill.style.width = progress + '%';
-                if (progress >= 100) { clearInterval(interval); navigateTo('analysis'); }
-            }, 30);
-        }
-
-        function navigateTo(page) {
-            document.getElementById('page-welcome').classList.add('hide');
-            document.getElementById('main-app').classList.remove('hide');
-            ['analysis', 'props', 'predictions', 'famousfive', 'slate'].forEach(s => {
-                document.getElementById('page-' + s).classList.add('hide');
-                document.getElementById('nav-' + s).className = 'text-gray-500';
-            });
-            document.getElementById('page-' + page).classList.remove('hide');
-            document.getElementById('nav-' + page).className = page === 'famousfive' ? 'nav-active text-amber-500' : 'nav-active';
-
-            if (page === 'props') generateProps();
-            if (page === 'predictions') generatePredictions();
-            if (page === 'famousfive') generateFamousFive();
-            if (page === 'slate') fetchSlate();
-        }
-
-        async function generateProps() {
-            const grid = document.getElementById('prop-grid');
-            grid.innerHTML = '<p class="text-amber-500 animate-pulse text-[10px] font-black uppercase">Decrypting 30 Props...</p>';
-            const res = await fetch(`https://api.the-odds-api.com/v4/sports/basketball_nba/odds/?apiKey=${API_KEY}&regions=us&markets=h2h`);
-            const data = await res.json();
+        function renderProps() {
+            const grid = document.getElementById('page-props');
             grid.innerHTML = '';
-
-            for(let i=0; i<30; i++) {
-                const game = data[i % data.length];
-                const risks = ['Low', 'Med', 'High'];
-                const riskIdx = Math.floor(Math.random() * 3);
-                const types = ["Points", "Rebounds", "Assists", "3PM"];
-                
+            props.forEach(p => {
                 const card = document.createElement('div');
-                card.className = 'glass p-4 rounded-xl border-l-2 border-white/5';
+                card.className = "glass p-5 rounded-2xl active:scale-95 transition-all cursor-pointer border border-white/5";
+                card.onclick = () => openModal(p);
                 card.innerHTML = `
-                    <div class="flex justify-between items-center mb-1">
-                        <span class="text-[7px] text-gray-500 font-bold uppercase">${game.home_team} @ ${game.away_team}</span>
-                        <span class="text-[8px] font-black uppercase risk-${risks[riskIdx].toLowerCase()}">${risks[riskIdx]} Risk</span>
+                    <div class="flex justify-between mb-2">
+                        <span class="text-[8px] font-black text-amber-500 uppercase">${p.team} vs ${p.opp}</span>
+                        <span class="text-[8px] font-bold text-green-500 uppercase">H2H ADVANTAGE</span>
                     </div>
-                    <p class="text-[11px] font-black text-white uppercase">Player ${i+1} Over ${(Math.random()*15+5).toFixed(1)} ${types[i%4]}</p>
+                    <p class="text-xs font-black text-white uppercase">${p.name}</p>
+                    <p class="text-[10px] text-gray-500 font-bold uppercase mt-1 tracking-widest">${p.line}</p>
                 `;
                 grid.appendChild(card);
-            }
+            });
         }
 
-        async function generatePredictions() {
-            const list = document.getElementById('prediction-list');
-            list.innerHTML = '<p class="text-amber-500 animate-pulse text-[10px] font-black uppercase">Analyzing 15 Markets...</p>';
-            const res = await fetch(`https://api.the-odds-api.com/v4/sports/basketball_nba/odds/?apiKey=${API_KEY}&regions=us&markets=h2h`);
-            const data = await res.json();
-            list.innerHTML = '';
+        function openModal(p) {
+            const content = document.getElementById('modal-content');
+            const maxVal = Math.max(...p.last10);
+            content.innerHTML = `
+                <div class="text-center mb-8">
+                    <span class="text-[8px] font-black text-amber-500 uppercase tracking-[0.3em]">H2H RECONNAISSANCE</span>
+                    <h2 class="text-4xl font-black italic text-white uppercase mt-1">${p.name}</h2>
+                </div>
 
-            data.slice(0, 15).forEach((game, idx) => {
-                const div = document.createElement('div');
-                div.className = 'glass p-4 rounded-2xl border-l-2 border-amber-500/20';
-                div.innerHTML = `
-                    <div class="flex justify-between text-[10px] font-black uppercase text-white">
-                        <span>${game.home_team} <span class="text-amber-500">-4.5</span></span>
-                        <span>${game.away_team} <span class="text-gray-500">ML Pick</span></span>
+                <div class="bg-amber-500 p-6 rounded-[2rem] mb-6 text-black flex justify-between items-center shadow-[0_20px_40px_rgba(245,158,11,0.2)]">
+                    <div>
+                        <p class="text-[8px] font-black uppercase opacity-60">Last H2H vs ${p.opp}</p>
+                        <p class="text-3xl font-black italic">${p.h2h.pts} <span class="text-xs uppercase not-italic">Points</span></p>
                     </div>
-                `;
-                list.appendChild(div);
-            });
+                    <div class="text-right">
+                        <p class="text-[10px] font-black uppercase leading-tight">${p.h2h.reb} REB / ${p.h2h.ast} AST</p>
+                        <p class="text-[7px] font-bold uppercase opacity-60 mt-1">Recorded: ${p.h2h.date}</p>
+                    </div>
+                </div>
+
+                <div class="mb-8">
+                    <p class="text-[8px] font-black text-gray-500 uppercase mb-4 tracking-widest text-center">Last 10 Performance</p>
+                    <div class="bar-container px-2">
+                        ${p.last10.map((val, i) => `
+                            <div class="bar ${i === 9 ? 'bar-active' : ''}" style="height: ${(val/maxVal)*100}%"></div>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <div class="bg-white/5 p-6 rounded-3xl border border-white/5">
+                    <p class="text-[12px] text-gray-300 leading-relaxed font-medium uppercase tracking-tight">
+                        <span class="text-amber-500 font-black">SYNDICATE INTEL:</span> ${p.note}
+                    </p>
+                </div>
+            `;
+            document.getElementById('modal-container').classList.remove('hide');
+            setTimeout(() => document.getElementById('modal-container').classList.add('show'), 10);
         }
 
-        async function generateFamousFive() {
-            const mlDiv = document.getElementById('ff-ml');
-            const propDiv = document.getElementById('ff-props');
-            mlDiv.innerHTML = propDiv.innerHTML = '<p class="text-[9px] animate-pulse uppercase font-black text-gray-600">Calculating Parlay Leg Odds...</p>';
-            
-            const res = await fetch(`https://api.the-odds-api.com/v4/sports/basketball_nba/odds/?apiKey=${API_KEY}&regions=us&markets=h2h`);
-            const data = await res.json();
-            
-            mlDiv.innerHTML = ''; propDiv.innerHTML = '';
-            
-            data.slice(0, 5).forEach((game, i) => {
-                mlDiv.innerHTML += `<div class="flex justify-between text-[10px] font-black uppercase text-gray-300"><span>${game.home_team} ML</span><span class="text-amber-500">✓ Leg ${i+1}</span></div>`;
-                propDiv.innerHTML += `<div class="flex justify-between text-[10px] font-black uppercase text-gray-300"><span>Player ${i+1} Over ${(Math.random()*20+5).toFixed(1)} Pts</span><span class="text-white/40 italic">Syncing</span></div>`;
-            });
+        function closeModal() {
+            document.getElementById('modal-container').classList.remove('show');
+            setTimeout(() => document.getElementById('modal-container').classList.add('hide'), 400);
         }
 
-        function fetchSlate() {
-            const container = document.getElementById('slate-container');
-            container.innerHTML = '<div class="glass p-6 text-center text-[10px] font-black uppercase text-amber-500 italic">Market Feed Locked. Decrypting...</div>';
-        }
-
-        // MATRIX
-        const canvas = document.getElementById('matrix-canvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-        const chars = "01BN$#"; const fontSize = 14;
-        const columns = canvas.width / fontSize;
-        const drops = Array(Math.floor(columns)).fill(1);
-        function draw() {
-            ctx.fillStyle = "rgba(5, 5, 6, 0.2)"; ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = "#F59E0B"; ctx.font = fontSize + "px monospace";
-            for (let i = 0; i < drops.length; i++) {
-                ctx.fillText(chars[Math.floor(Math.random() * chars.length)], i * fontSize, drops[i] * fontSize);
-                if (drops[i] * fontSize > canvas.height && Math.random() > 0.98) drops[i] = 0;
-                drops[i]++;
-            }
-        }
-        setInterval(draw, 70);
+        renderProps();
     </script>
 </body>
 </html>
