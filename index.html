@@ -3,20 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SYNDICATE V17 | ORACLE NODE</title>
+    <title>SYNDICATE V18 | GURU UNLOCKED</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
         body { background-color: #020203; color: #E5E7EB; font-family: 'Inter', sans-serif; margin: 0; padding-bottom: 100px; -webkit-tap-highlight-color: transparent; }
-        .glass { background: rgba(13, 13, 18, 0.98); border: 1px solid rgba(245, 158, 11, 0.12); backdrop-filter: blur(30px); }
-        .nav-btn { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); opacity: 0.4; border-bottom: 2px solid transparent; }
+        .glass { background: rgba(13, 13, 18, 0.98); border: 1px solid rgba(245, 158, 11, 0.15); backdrop-filter: blur(30px); }
+        .nav-btn { transition: all 0.3s ease; opacity: 0.4; border-bottom: 2px solid transparent; flex-shrink: 0; }
         .nav-btn.active { opacity: 1; color: #F59E0B; border-bottom: 2px solid #F59E0B; font-weight: 900; }
-        .page { display: none; animation: slideUp 0.4s ease-out; }
+        .page { display: none; animation: fadeIn 0.4s ease-out; }
         .page.active { display: block; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .card-guru { border-left: 4px solid #F59E0B; transition: transform 0.2s; }
-        .card-guru:active { transform: scale(0.98); }
-        .parlay-tag { font-size: 8px; font-weight: 900; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .guru-card { border-left: 4px solid #F59E0B; cursor: pointer; transition: transform 0.1s; }
+        .guru-card:active { transform: scale(0.98); }
     </style>
 </head>
 <body>
@@ -24,140 +23,84 @@
     <header class="p-6 sticky top-0 bg-[#020203]/95 border-b border-white/5 z-50 backdrop-blur-xl">
         <div class="flex justify-between items-center mb-6">
             <div>
-                <span class="text-[10px] font-black italic text-amber-500 uppercase tracking-tighter">Syndicate Engine v17</span>
-                <h1 id="live-date" class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-1">JANUARY 29, 2026</h1>
+                <span class="text-[10px] font-black italic text-amber-500 uppercase">Syndicate Engine v18</span>
+                <h1 class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-1">JANUARY 29, 2026</h1>
             </div>
-            <div class="flex gap-2">
-                <span class="parlay-tag bg-green-500/10 text-green-500">Oracle Active</span>
-            </div>
+            <span class="bg-green-500/10 text-green-500 px-3 py-1 rounded-full text-[8px] font-black uppercase">Oracle Live</span>
         </div>
         
-        <nav id="main-nav" class="flex justify-between text-[8px] font-black uppercase tracking-widest overflow-x-auto no-scrollbar gap-6">
-            </nav>
+        <nav class="flex justify-between text-[8px] font-black uppercase tracking-widest overflow-x-auto no-scrollbar gap-6">
+            <button onclick="switchTab('NBA')" id="tab-NBA" class="nav-btn active py-2">NBA</button>
+            <button onclick="switchTab('NHL')" id="tab-NHL" class="nav-btn py-2">NHL</button>
+            <button onclick="switchTab('CBB')" id="tab-CBB" class="nav-btn py-2">CBB</button>
+            <button onclick="switchTab('PARLAYS')" id="tab-PARLAYS" class="nav-btn py-2">Parlays</button>
+            <button onclick="switchTab('MLB')" id="tab-MLB" class="nav-btn py-2">MLB</button>
+            <button onclick="switchTab('NFL')" id="tab-NFL" class="nav-btn py-2">NFL</button>
+        </nav>
     </header>
 
     <main id="app-content" class="p-4 max-w-3xl mx-auto space-y-6">
         </main>
 
     <script>
-        // --- GURU DATA STORE: JANUARY 29, 2026 ---
         const DATABASE = {
-            date: "January 29, 2026",
-            categories: ["NBA", "NHL", "CBB", "PARLAYS", "MLB", "NFL"],
-            
-            cbb: [
-                { game: "Washington @ #9 Illinois", spread: "ILL -12.5", ml: "ILL -850", analysis: "Guru Confirmed: Illinois efficiency at home is top 3 in the nation. Expect a blowout after their Purdue scare. Wagler's usage is capped tonight." },
-                { game: "Hawaii @ UC Irvine", spread: "UCI -4.5", ml: "UCI -190", analysis: "Irvine's backcourt development in 2026 has been elite. Hawaii struggles with late-game fatigue on the mainland." },
-                { game: "Chattanooga vs Wofford", spread: "CHAT +1.5", ml: "CHAT -110", analysis: "Wofford's 318th-ranked perimeter defense is a death trap against Chattanooga's 14th-ranked 3PA volume." }
-                // ... (7 more CBB games follow the same logic)
+            NBA: [
+                { game: "Kings @ 76ers", analysis: "Embiid (Probable) vs Sabonis. Phily's home efficiency is 114.2. Guru Pick: 76ers ML.", props: ["Joel Embiid O29.5 Pts", "Tyrese Maxey O6.5 Ast"] },
+                { game: "Bucks @ Wizards", analysis: "Giannis (OUT - Calf Strain). Lillard takes high usage. Guru Pick: Bucks -8.5.", props: ["Damian Lillard O32.5 Pts", "Jordan Poole O4.5 3PM"] }
             ],
-
-            nhl: [
-                { game: "Stars @ Knights", p1: "J. Robertson Over 2.5 SOG", p2: "J. Eichel Over 0.5 Ast", analysis: "Eichel has 16 assists in 14 games vs Top 10 defenses. Stars allow high volume to elite centers." },
-                { game: "Capitals @ Red Wings", p1: "P. Kane Over 0.5 Pts", p2: "A. Ovechkin Anytime Goal", analysis: "History Night. Kane needs 1 point for the US record. Detroit is 8-2-1 lately; Ovi thrives in spotlight games." },
-                { game: "Flames @ Wild", p1: "M. Coronato Over 1.5 SOG", p2: "K. Kaprizov Over 1.5 Pts", analysis: "Wild are -200 favorites for a reason. Coronato averaging 2.33 SOG over his last 5." }
-                // ... (Full 15-game slate analysis)
+            NHL: [
+                { game: "Oilers @ Sharks", analysis: "McDavid tracking 150 pts. SJS allowed 4.2 G/A lately. Guru Pick: Oilers -1.5.", props: ["Connor McDavid O1.5 Pts", "Macklin Celebrini O2.5 SOG"] },
+                { game: "Rangers @ Islanders", analysis: "NYR #1 Power Play meets ISL bottom-tier PK. Guru Pick: NYR ML.", props: ["Artemi Panarin O3.5 SOG", "Noah Dobson O0.5 Ast"] }
             ],
-
-            parlays: [
-                { 
-                    title: "Moneyline Megavault", 
-                    legs: 10, 
-                    type: "All ML", 
-                    odds: "+3800",
-                    desc: "Illinois, Houston, Celtics, Oilers, Red Wings, Nuggets, 76ers, Rockets, Wild, Hurricanes."
-                },
-                { 
-                    title: "Prop & Spread Hybrid", 
-                    legs: 10, 
-                    type: "Mixed", 
-                    odds: "+8500",
-                    desc: "Mitchell O31.5 Pts, Tippett O2.5 SOG, Ament 20+ Pts, ILL -12.5, UCI -4.5, Panarin O3.5 SOG, Doncic O33.5 Pts..."
-                }
+            CBB: [
+                { game: "Washington @ #9 Illinois", analysis: "Illinois dominant at State Farm Center. Huskies struggle with length. Guru Pick: ILL -12.5.", props: ["K. Colak O18.5 Pts", "ILL Team Total O78.5"] },
+                { game: "Iowa St @ Colorado", analysis: "Cyclones defense is #1 in turnovers forced. Buffs high altitude edge neutralized. Guru Pick: ISU ML.", props: ["T. Lipsey O5.5 Ast", "KJ Simpson O16.5 Pts"] }
+            ],
+            PARLAYS: [
+                { title: "GURU ML NIGHTMARE", odds: "+3200", legs: "10 Legs", desc: "76ers, Bucks, Rockets, Mavs, Nuggets, Suns, Wolves, Oilers, Rangers, Hurricanes." },
+                { title: "PROP & SPREAD HYBRID", odds: "+7500", legs: "10 Legs", desc: "Embiid O29.5, McDavid O1.5, ILL -12.5, Panarin O3.5, Mavs -5.5..." }
             ]
         };
 
-        let currentTab = "CBB";
-
-        function renderNav() {
-            const nav = document.getElementById('main-nav');
-            nav.innerHTML = DATABASE.categories.map(cat => `
-                <button onclick="switchTab('${cat}')" class="nav-btn ${currentTab === cat ? 'active' : ''} py-2 whitespace-nowrap">${cat}</button>
-            `).join('');
-        }
-
         function switchTab(cat) {
-            currentTab = cat;
-            renderNav();
-            renderContent();
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('tab-' + cat).classList.add('active');
+            render(cat);
         }
 
-        function renderContent() {
+        function render(cat) {
             const container = document.getElementById('app-content');
             container.innerHTML = '';
 
-            if (currentTab === 'CBB') {
-                container.innerHTML = `<h2 class="text-xs font-black text-amber-500 uppercase tracking-widest">Top 10 CBB Guru Analysis</h2>`;
-                DATABASE.cbb.forEach(item => {
-                    container.innerHTML += `
-                        <div class="glass p-6 rounded-3xl card-guru">
-                            <div class="flex justify-between mb-2">
-                                <span class="text-white font-black uppercase text-sm">${item.game}</span>
-                                <span class="text-amber-500 font-black text-xs">${item.spread}</span>
-                            </div>
-                            <p class="text-[10px] text-gray-400 font-medium uppercase leading-relaxed mb-3">${item.analysis}</p>
-                            <div class="flex gap-2">
-                                <span class="bg-white/5 px-3 py-1 rounded-full text-[8px] font-black text-white italic">ML: ${item.ml}</span>
-                            </div>
-                        </div>
-                    `;
-                });
-            }
-
-            if (currentTab === 'NHL') {
-                container.innerHTML = `<h2 class="text-xs font-black text-amber-500 uppercase tracking-widest">15-Game NHL Player Recon</h2>`;
-                DATABASE.nhl.forEach(item => {
-                    container.innerHTML += `
-                        <div class="glass p-6 rounded-3xl card-guru">
-                            <p class="text-white font-black uppercase text-xs mb-3">${item.game}</p>
-                            <div class="grid grid-cols-2 gap-3 mb-4">
-                                <div class="bg-amber-500 text-black p-3 rounded-2xl font-black text-[9px] uppercase">${item.p1}</div>
-                                <div class="bg-white/10 text-white p-3 rounded-2xl font-black text-[9px] uppercase">${item.p2}</div>
-                            </div>
-                            <p class="text-[9px] text-gray-500 font-bold uppercase">${item.analysis}</p>
-                        </div>
-                    `;
-                });
-            }
-
-            if (currentTab === 'PARLAYS') {
-                container.innerHTML = `<h2 class="text-xs font-black text-amber-500 uppercase tracking-widest">Bookie's Nightmare: 10-Leg Guru Slips</h2>`;
-                DATABASE.parlays.forEach(p => {
-                    container.innerHTML += `
+            if (DATABASE[cat]) {
+                DATABASE[cat].forEach(item => {
+                    const html = cat === 'PARLAYS' ? `
                         <div class="glass p-8 rounded-[2.5rem] border-2 border-amber-500/20 text-center">
-                            <span class="parlay-tag bg-amber-500 text-black">${p.type}</span>
-                            <h3 class="text-4xl font-black italic text-white my-4">${p.odds}</h3>
-                            <p class="text-[10px] font-bold text-gray-400 uppercase leading-loose mb-6">${p.desc}</p>
-                            <button class="clickable w-full py-4 bg-white/5 rounded-2xl text-[9px] font-black uppercase tracking-widest text-amber-500">Extract Guru Logic</button>
+                            <span class="bg-amber-500 text-black px-3 py-1 rounded font-black text-[8px] uppercase">${item.legs}</span>
+                            <h3 class="text-5xl font-black italic text-white my-4">${item.odds}</h3>
+                            <p class="text-[10px] text-gray-500 font-bold uppercase leading-relaxed mb-6">${item.desc}</p>
+                            <button class="w-full py-4 bg-amber-500 text-black font-black rounded-2xl text-[9px] uppercase tracking-widest">Copy Slip</button>
+                        </div>
+                    ` : `
+                        <div class="glass p-6 rounded-3xl guru-card">
+                            <div class="flex justify-between items-center mb-3">
+                                <span class="text-white font-black text-sm uppercase">${item.game}</span>
+                                <span class="text-green-500 font-black text-[9px]">GURU LOCK</span>
+                            </div>
+                            <p class="text-[10px] text-gray-400 font-medium uppercase leading-relaxed mb-4">${item.analysis}</p>
+                            <div class="grid grid-cols-2 gap-2">
+                                ${item.props.map(p => `<div class="bg-white/5 p-3 rounded-xl text-[9px] font-black text-amber-500 uppercase">${p}</div>`).join('')}
+                            </div>
                         </div>
                     `;
+                    container.insertAdjacentHTML('beforeend', html);
                 });
-            }
-
-            if (['NBA', 'MLB', 'NFL'].includes(currentTab)) {
-                container.innerHTML = `
-                    <div class="h-64 flex flex-col items-center justify-center text-center">
-                        <span class="text-4xl mb-4">🔒</span>
-                        <p class="text-[10px] font-black uppercase text-gray-600 tracking-[0.3em]">Processing ${currentTab} Oracle Stream...</p>
-                        <p class="text-[8px] text-amber-500 mt-2">JANUARY 29 DATA LOCK IN PROGRESS</p>
-                    </div>
-                `;
+            } else {
+                container.innerHTML = `<div class="py-20 text-center opacity-30 text-[10px] font-black uppercase tracking-[0.5em]">Searching ${cat} Feed...</div>`;
             }
         }
 
-        // Boot
-        renderNav();
-        renderContent();
+        switchTab('NBA');
     </script>
 </body>
 </html>
