@@ -3,187 +3,191 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SYNDICATE V14 | FULL ACCESS</title>
+    <title>SYNDICATE V16 | LIVE SYNC</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
-        body { background-color: #040405; color: #E5E7EB; font-family: 'Inter', sans-serif; margin: 0; padding-bottom: 100px; -webkit-tap-highlight-color: transparent; }
-        .glass { background: rgba(18, 18, 24, 0.96); border: 1px solid rgba(245, 158, 11, 0.15); backdrop-filter: blur(20px); }
-        .nav-btn { transition: all 0.2s ease; border-bottom: 2px solid transparent; }
-        .nav-btn.active { color: #F59E0B; border-bottom: 2px solid #F59E0B; font-weight: 900; }
-        .page { display: none; animation: fadeIn 0.3s ease; }
+        body { background-color: #040405; color: #E5E7EB; font-family: 'Inter', sans-serif; margin: 0; padding-bottom: 100px; -webkit-tap-highlight-color: transparent; overflow-x: hidden; }
+        .glass { background: rgba(18, 18, 24, 0.98); border: 1px solid rgba(245, 158, 11, 0.15); backdrop-filter: blur(25px); }
+        .nav-btn { transition: all 0.2s ease; border-bottom: 3px solid transparent; opacity: 0.5; }
+        .nav-btn.active { color: #F59E0B; border-bottom: 3px solid #F59E0B; font-weight: 900; opacity: 1; }
+        .page { display: none; animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
         .page.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
-        /* MODAL FIX: Absolutely cannot block the main screen when closed */
-        #modal-overlay { 
-            display: none; 
-            position: fixed; 
-            inset: 0; 
-            background: rgba(0,0,0,0.85); 
-            z-index: 100; 
-            justify-content: center; 
-            align-items: flex-end; 
-        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        #modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 100; justify-content: center; align-items: flex-end; }
         #modal-overlay.active { display: flex; }
         .clickable { cursor: pointer; transition: transform 0.1s; }
-        .clickable:active { transform: scale(0.96); }
+        .clickable:active { transform: scale(0.97); }
     </style>
 </head>
 <body>
 
     <header class="p-5 sticky top-0 bg-[#040405]/95 border-b border-white/5 z-50 backdrop-blur-md">
-        <div class="flex justify-between items-center mb-6 px-2">
-            <span class="text-[11px] font-black italic text-amber-500 uppercase tracking-tighter">Syndicate Engine v14</span>
-            <div class="flex items-center gap-2">
-                <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
-                <span class="text-[9px] font-bold text-gray-500 uppercase tracking-widest">LIVE • JAN 28, 2026</span>
-            </div>
+        <div class="flex justify-between items-center mb-6">
+            <span class="text-[11px] font-black italic text-amber-500 uppercase tracking-tighter">SYNDICATE V16 • LIVE</span>
+            <span class="text-[9px] font-bold text-gray-500 uppercase tracking-widest">JAN 28, 2026</span>
         </div>
         
         <nav class="flex justify-between text-[8px] font-black uppercase tracking-widest">
             <button onclick="showPage('props')" id="tab-props" class="nav-btn active px-2 py-3">Prop Lab</button>
-            <button onclick="showPage('trends')" id="tab-trends" class="nav-btn px-2 py-3">Market Trends</button>
             <button onclick="showPage('five')" id="tab-five" class="nav-btn px-2 py-3">Famous Five</button>
-            <button onclick="showPage('intel')" id="tab-intel" class="nav-btn px-2 py-3">Inactives</button>
+            <button onclick="showPage('intel')" id="tab-intel" class="nav-btn px-2 py-3">Injury Hub</button>
+            <button onclick="showPage('market')" id="tab-market" class="nav-btn px-2 py-3">Trends</button>
         </nav>
     </header>
 
     <main class="p-4 max-w-2xl mx-auto">
         
-        <section id="page-props" class="page active grid grid-cols-1 gap-4"></section>
-
-        <section id="page-trends" class="page space-y-4">
-            <div class="glass p-6 rounded-3xl">
-                <p class="text-[9px] font-black text-amber-500 uppercase mb-4">Volume Leaders (Jan 28)</p>
-                <div class="space-y-4" id="trends-list"></div>
-            </div>
+        <section id="page-props" class="page active">
+            <div id="prop-filter-bar" class="flex gap-2 mb-6 overflow-x-auto no-scrollbar pb-2"></div>
+            <div id="prop-grid" class="grid grid-cols-1 gap-4"></div>
         </section>
 
         <section id="page-five" class="page space-y-4">
-            <div class="glass p-10 rounded-[2.5rem] text-center border-2 border-amber-500/20 shadow-2xl shadow-amber-500/5">
-                <p class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">The Night-Shift Parlay</p>
-                <h3 class="text-6xl font-black italic text-white my-4">+3400</h3>
-                <div class="space-y-2 mb-8">
-                    <p class="text-xs font-bold text-amber-500 uppercase">Mitchell • Jokic • Luka • SGA • Edwards</p>
+            <div class="glass p-10 rounded-[2.5rem] text-center border-2 border-amber-500/20 shadow-2xl">
+                <p class="text-[10px] font-black text-amber-500 uppercase mb-2">The Syndicate Megaslip</p>
+                <h3 class="text-6xl font-black italic text-white my-4">+4150</h3>
+                <div class="text-[11px] font-bold text-gray-400 uppercase space-y-1 mb-8">
+                    <p>Mitchell (CLE) Over 31.5 Pts</p>
+                    <p>Tippett (PHI) Over 2.5 SOG</p>
+                    <p>Ament (TENN) 20+ Points</p>
+                    <p>Ball (CHA) Over 3.5 3PM</p>
+                    <p>Doncic (LAL) Over 33.5 Pts</p>
                 </div>
-                <button class="clickable w-full py-5 bg-amber-500 text-black font-black rounded-3xl text-[11px] uppercase tracking-widest">Lock In Ticket</button>
+                <button class="clickable w-full py-5 bg-amber-500 text-black font-black rounded-3xl text-[11px] uppercase tracking-widest">Copy Syndicate Slip</button>
             </div>
         </section>
 
         <section id="page-intel" class="page space-y-3" id="intel-list"></section>
 
+        <section id="page-market" class="page space-y-4">
+            <div class="glass p-6 rounded-3xl" id="market-list"></div>
+        </section>
+
     </main>
 
     <div id="modal-overlay" onclick="closeModal()">
-        <div class="glass w-full max-w-lg rounded-t-[3rem] p-10 border-t border-amber-500/40 transform translate-y-0" onclick="event.stopPropagation()">
+        <div class="glass w-full max-w-lg rounded-t-[3rem] p-10 border-t border-amber-500/40" onclick="event.stopPropagation()">
             <div id="modal-content"></div>
-            <button onclick="closeModal()" class="clickable w-full py-5 bg-white/5 rounded-3xl text-[10px] font-black uppercase tracking-widest text-gray-500 mt-6">Return to Lab</button>
+            <button onclick="closeModal()" class="clickable w-full py-5 bg-white/5 rounded-3xl text-[10px] font-black uppercase text-gray-500 mt-6 tracking-[0.2em]">Close Recon</button>
         </div>
     </div>
 
     <script>
-        const players = [
-            { name: "Donovan Mitchell", team: "CLE", line: "Over 31.5 Pts", trend: "UP", status: "Active", reason: "Garland OUT" },
-            { name: "Luka Doncic", team: "LAL", line: "Over 30.5 Pts", trend: "UP", status: "Active", reason: "Reaves OUT" },
-            { name: "Nikola Jokic", team: "DEN", line: "Over 28.5 Pts", trend: "STABLE", status: "Active", reason: "Season High 56" },
-            { name: "Anthony Edwards", team: "MIN", line: "Over 29.5 Pts", trend: "UP", status: "Active", reason: "Christmas 44" }
+        const allProps = [
+            // NBA
+            { name: "Donovan Mitchell", team: "CLE", line: "Over 31.5 Pts", cat: "NBA", edge: "92%", note: "Garland/Mobley OUT. Proj: 34.2 Pts." },
+            { name: "Luka Doncic", team: "LAL", line: "Over 33.5 Pts", cat: "NBA", edge: "89%", note: "Coming off 46-pt game. Reaves OUT." },
+            { name: "LaMelo Ball", team: "CHA", line: "Over 3.5 3PM", cat: "NBA", edge: "88%", note: "Proj: 3.9. 10.9% market edge." },
+            { name: "Naz Reid", team: "MIN", line: "Over 2.5 3PM", cat: "NBA", edge: "81%", note: "Averages 2.4 3PM; DAL defense leaky vs bigs." },
+            { name: "Anthony Black", team: "ORL", line: "Over 9.5 R+A", cat: "NBA", edge: "80%", note: "Wagner OUT; Black cleared 6/6 in this scenario." },
+            // NHL
+            { name: "Owen Tippett", team: "PHI", line: "Over 2.5 SOG", cat: "NHL", edge: "94%", note: "Top Pick. CBJ allows 2nd most shots in NHL." },
+            { name: "Artemi Panarin", team: "NYR", line: "Over 3.5 SOG", cat: "NHL", edge: "87%", note: "Avg 8.0 attempts over last 5 games." },
+            { name: "Adam Fantilli", team: "CBJ", line: "Over 2.5 SOG", cat: "NHL", edge: "81%", note: "5 points in last 6 games. Firing at will." },
+            { name: "Artturi Lehkonen", team: "COL", line: "Over 0.5 Pts", cat: "NHL", edge: "78%", note: "Top-line deployment against Senators." },
+            { name: "Dan Vladar", team: "PHI", line: "Over 27.5 Saves", cat: "NHL", edge: "74%", note: "Confirmed starter vs high-volume CBJ." },
+            // CBB
+            { name: "Nate Ament", team: "TENN", line: "20+ Points", cat: "CBB", edge: "91%", note: "SEC Player of the Week. Avg 23 PPG in Jan." },
+            { name: "Alijah Arenas", team: "USC", line: "Over 18.5 Pts", cat: "CBB", edge: "77%", note: "Freshman phenom; leading USC usage vs Iowa." },
+            { name: "CJ Gunn", team: "DEP", line: "Over 2.5 3PM", cat: "CBB", edge: "83%", note: "Sharp money alert in Vegas vs Georgetown." },
+            { name: "I. Abraham", team: "GTWN", line: "Over 12.5 Pts", cat: "CBB", edge: "85%", note: "Consistency play; cleared in 9/10 games." },
+            { name: "Houston/TCU", team: "NCAAB", line: "Over 137.5 Tot", cat: "CBB", edge: "82%", note: "Houston bounce-back spot after first loss." }
         ];
 
         function showPage(pageId) {
-            // Hide all
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            // Show current
             document.getElementById('page-' + pageId).classList.add('active');
             document.getElementById('tab-' + pageId).classList.add('active');
             
-            if(pageId === 'props') renderProps();
-            if(pageId === 'intel') renderIntel();
-            if(pageId === 'trends') renderTrends();
+            if(pageId === 'props') renderPropLab('NBA');
+            if(pageId === 'intel') renderInjuries();
+            if(pageId === 'market') renderMarket();
         }
 
-        function renderProps() {
-            const grid = document.getElementById('page-props');
-            grid.innerHTML = '';
-            players.forEach(p => {
-                const card = document.createElement('div');
-                card.className = "clickable glass p-6 rounded-[2rem] flex justify-between items-center";
-                card.onclick = () => openModal(p);
-                card.innerHTML = `
+        function renderPropLab(cat = 'NBA') {
+            const grid = document.getElementById('prop-grid');
+            const filters = document.getElementById('prop-filter-bar');
+            filters.innerHTML = ['NBA', 'NHL', 'CBB'].map(c => `
+                <button onclick="renderPropLab('${c}')" class="px-5 py-2 rounded-2xl text-[8px] font-black uppercase ${cat === c ? 'bg-amber-500 text-black' : 'bg-white/5 text-gray-500'}">${c}</button>
+            `).join('');
+            
+            grid.innerHTML = allProps.filter(p => p.cat === cat).map(p => `
+                <div class="clickable glass p-6 rounded-[2rem] flex justify-between items-center border border-white/5" onclick="openModal('${p.name}')">
                     <div>
                         <div class="flex items-center gap-2 mb-1">
                             <span class="text-[9px] font-black text-amber-500 uppercase">${p.team}</span>
-                            <span class="text-[8px] font-bold text-green-500">JAN 28 PEAK</span>
+                            <span class="text-[7px] font-bold text-green-500">${p.edge} EDGE</span>
                         </div>
-                        <p class="text-base font-black text-white uppercase tracking-tight">${p.name}</p>
-                        <p class="text-[11px] text-gray-500 font-bold uppercase mt-1 tracking-widest">${p.line}</p>
+                        <p class="text-base font-black text-white uppercase">${p.name}</p>
+                        <p class="text-[11px] text-gray-500 font-bold uppercase mt-1">${p.line}</p>
                     </div>
-                    <div class="text-right">
-                        <span class="text-xl">📈</span>
-                    </div>
-                `;
-                grid.appendChild(card);
-            });
+                    <span class="text-xl opacity-50">🔬</span>
+                </div>
+            `).join('');
         }
 
-        function renderIntel() {
+        function renderInjuries() {
             const list = document.getElementById('page-intel');
-            list.innerHTML = `<h2 class="text-xs font-black uppercase text-amber-500 mb-6">Confirmed Inactives</h2>`;
-            const inactives = ["Darius Garland (CLE)", "Evan Mobley (CLE)", "Austin Reaves (LAL)", "Tyrese Haliburton (IND)"];
-            inactives.forEach(name => {
-                list.innerHTML += `
+            const inactives = [
+                { name: "Darius Garland", team: "CLE", status: "OUT", reason: "Toe Sprain" },
+                { name: "Evan Mobley", team: "CLE", status: "OUT", reason: "Calf Strain" },
+                { name: "Austin Reaves", team: "LAL", status: "OUT", reason: "Calf Strain" },
+                { name: "Tyrese Haliburton", team: "IND", status: "OUT", reason: "Achilles Surgery" }
+            ];
+            list.innerHTML = `<h2 class="text-xs font-black uppercase text-amber-500 mb-6">Jan 28 Official Inactives</h2>` + 
+                inactives.map(i => `
                     <div class="glass p-5 rounded-2xl border-l-4 border-red-500 flex justify-between items-center">
-                        <span class="text-xs font-black uppercase">${name}</span>
-                        <span class="text-[8px] font-bold text-red-500 uppercase tracking-widest">OUT TONIGHT</span>
+                        <div>
+                            <p class="text-xs font-black text-white uppercase">${i.name}</p>
+                            <p class="text-[8px] text-gray-500 uppercase">${i.reason}</p>
+                        </div>
+                        <span class="text-[8px] font-black bg-red-500 px-2 py-1 rounded text-white">${i.status}</span>
                     </div>
-                `;
-            });
+                `).join('');
         }
 
-        function renderTrends() {
-            const list = document.getElementById('trends-list');
-            list.innerHTML = '';
-            players.forEach(p => {
-                list.innerHTML += `
-                    <div class="flex justify-between items-center">
-                        <span class="text-xs font-black text-white uppercase">${p.name}</span>
-                        <div class="h-1 w-32 bg-white/5 rounded-full overflow-hidden">
-                            <div class="h-full bg-amber-500" style="width: ${Math.random()*40+60}%"></div>
+        function renderMarket() {
+            const list = document.getElementById('market-list');
+            list.innerHTML = `<h2 class="text-[10px] font-black text-amber-500 uppercase mb-4">Volume Trends</h2>` + 
+                allProps.slice(0, 6).map(p => `
+                    <div class="mb-4">
+                        <div class="flex justify-between text-[10px] font-black uppercase mb-1">
+                            <span class="text-white">${p.name}</span>
+                            <span class="text-gray-500">${p.edge} Confidence</span>
+                        </div>
+                        <div class="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                            <div class="h-full bg-amber-500" style="width: ${p.edge}"></div>
                         </div>
                     </div>
-                `;
-            });
+                `).join('');
         }
 
-        function openModal(p) {
+        function openModal(playerName) {
+            const p = allProps.find(item => item.name === playerName);
             const content = document.getElementById('modal-content');
             content.innerHTML = `
                 <div class="text-center mb-10">
-                    <p class="text-[9px] font-black text-amber-500 uppercase tracking-[0.4em] mb-2">Detailed Recon</p>
+                    <p class="text-[9px] font-black text-amber-500 uppercase tracking-[0.4em] mb-2">${p.cat} RECON</p>
                     <h2 class="text-5xl font-black italic text-white uppercase tracking-tighter">${p.name}</h2>
+                    <p class="text-sm font-bold text-gray-400 mt-2">${p.line}</p>
                 </div>
-                <div class="bg-amber-500 text-black p-6 rounded-3xl font-black uppercase text-sm mb-6 text-center italic shadow-xl">
-                    ${p.reason} Logic Applied
+                <div class="bg-amber-500 text-black p-6 rounded-3xl font-black uppercase text-center italic shadow-xl mb-6">
+                    ${p.edge} SYNDICATE CONFIDENCE
                 </div>
-                <div class="space-y-4">
-                    <div class="bg-white/5 p-6 rounded-3xl border border-white/10">
-                        <p class="text-[10px] text-gray-500 font-black uppercase mb-2">Strategic Note</p>
-                        <p class="text-xs text-gray-300 font-medium leading-relaxed uppercase">
-                            Player usage is projected to increase by 6.4% tonight based on the confirmed absence of key rotation teammates.
-                        </p>
-                    </div>
+                <div class="bg-white/5 p-6 rounded-3xl border border-white/10">
+                    <p class="text-[10px] text-amber-500 font-black uppercase mb-2">Technical Analysis</p>
+                    <p class="text-xs text-gray-300 font-medium leading-relaxed uppercase">${p.note}</p>
                 </div>
             `;
             document.getElementById('modal-overlay').classList.add('active');
         }
 
-        function closeModal() {
-            document.getElementById('modal-overlay').classList.remove('active');
-        }
+        function closeModal() { document.getElementById('modal-overlay').classList.remove('active'); }
 
-        // Boot
-        renderProps();
+        // Initial Load
+        renderPropLab('NBA');
     </script>
 </body>
 </html>
